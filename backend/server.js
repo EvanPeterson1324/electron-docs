@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 
 mongoose.connection.on('connected', () => {
   console.log('Successfully connected to MongoDB! =)');
