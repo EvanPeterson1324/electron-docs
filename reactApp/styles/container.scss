@@ -1,0 +1,28 @@
+#container {
+  border: 2px solid #dddddd;
+  border-radius: 3px;
+  height: 1200px;
+  margin: 30px;
+  width: 80%;
+  padding: 70px;
+  font-family: 'Lato';
+  background-color: white;
+  font-size: 20px;
+  color: #4f4f4f;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.05);
+
+}
+.align {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e0e0e0;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.alignSB {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
