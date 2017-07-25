@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 //import {Editor, EditorState} from 'draft-js';
-import { Link } from 'react-router-dom';
+
 class Register extends React.Component {
   constructor(props) {
     super(props);
@@ -61,7 +61,6 @@ class Register extends React.Component {
                 <input
                   type="submit"></input>
         </form>
-        <Link to="/login">Login</Link>
       </div>
     );
   }

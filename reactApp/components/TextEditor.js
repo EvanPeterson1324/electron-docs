@@ -1,5 +1,5 @@
 import React from 'react';
-import {Editor, EditorState, RichUtils, /*convertToRaw,*/ DefaultDraftBlockRenderMap} from 'draft-js';
+import {Editor, EditorState, RichUtils, convertToRaw, DefaultDraftBlockRenderMap} from 'draft-js';
 import styles from '../styles/styles';
 import { Map } from 'immutable';
 import '../styles/container.scss';
@@ -28,12 +28,30 @@ const blockRenderMap = Map({
 
 const extendedBlockRenderMap = DefaultDraftBlockRenderMap.merge(blockRenderMap);
 
+function msgReceived(msg){
+    document.getElementById('people').innerHTML=msg.uid;
+}
+
 class TextEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {editorState: EditorState.createEmpty()};
     this.onChange = (editorState) => this.setState({editorState});
   }
+
+  // componentDidMount() {
+  //   var socket = io('localhost: 3000', {'sync disconnect on unload':true});
+  //
+  //   socket.on('message', function(msg){
+  //          msgReceived(msg);
+  //      });
+  //
+  //     
+  //   if(this.state.editorState){
+  //       socket.emit('editorState', this.state.editorState);
+  //   }
+  // }
+
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {
@@ -54,7 +72,6 @@ class TextEditor extends React.Component {
     if (type === 'header-three') {
       return 'h3';
     }
-    return 'none';
   }
   makeBold() {
     this.onChange(RichUtils.toggleInlineStyle(
@@ -226,7 +243,6 @@ class TextEditor extends React.Component {
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
-          <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script>
           </div>
         </div>
       </div>

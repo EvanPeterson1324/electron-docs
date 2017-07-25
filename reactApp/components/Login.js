@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-
+//import { BrowserRouter as Router, Route } from 'react-router-dom'
+//import { Link } from 'react-router';
+//import {Editor, EditorState} from 'draft-js';
+//import { BrowserRouter , Link} from 'react-router-dom'
 /**
  * This component allows the user to attempt to login to our app,
  * and if successful, will be brought to the list of documents they have saved.
@@ -65,7 +67,6 @@ class Login extends React.Component {
             type="submit"
             ></input>
         </form>
-        <Link to="/register">Register</Link>
       </div>
     );
   }
