@@ -45,10 +45,21 @@ io.on('connection', socket => {
   socket.on('newEvent', function() {
   });
 
+  socket.on('joinRoom', function(docId) {
+    socket.roomId = docId;
+    socket.join(docId);
+  })
+
   socket.on('liveEdit', stringRaw => {
     console.log('SERVER GOT THIS STRING', stringRaw);
-    socket.broadcast.emit('broadcastEdit', stringRaw);
+    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
+
+  socket.on('disconnect', () => {
+    if (socket.roomId) {
+      socket.leave(socket.roomId);
+    }
+  })
 });
 
 

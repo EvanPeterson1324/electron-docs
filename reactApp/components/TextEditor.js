@@ -62,6 +62,7 @@ class TextEditor extends React.Component {
       });
     }
     this.socket = io.connect('http://localhost:3000');
+    this.socket.emit('joinRoom', this.state.docId);
     this.setState({socket: this.socket});
     this.socket.on('broadcastEdit', stringRaw => {
       const content = convertFromRaw(JSON.parse(stringRaw));
@@ -69,9 +70,9 @@ class TextEditor extends React.Component {
     });
   }
   onChange(editorState) {
-    console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
+    console.log("THIS IS THE STATE", this.state);
     this.setState({editorState: editorState});
-    const raw = convertToRaw(this.state.editorState.getCurrentContent());
+    const raw = convertToRaw(editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
     this.state.socket.emit('liveEdit', stringRaw);
     // console.log('STRINGRAW FROM CLIENT', stringRaw);
