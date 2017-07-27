@@ -433,7 +433,25 @@ const styles = {
     borderColor: '#c6c6c6',
     borderStyle: 'solid',
     borderWidth: '1px'
-  }
+  },
+  highlight_FFA500: {
+    backgroundColor: '#FFA500'
+  },
+  highlight_6897bb: {
+    backgroundColor: '#6897bb'
+  },
+  highlight_343417: {
+    backgroundColor: '#343417'
+  },
+  highlight_3b5998: {
+    backgroundColor: '#3b5998'
+  },
+  highlight_ffd700: {
+    backgroundColor: '#ffd700'
+  },
+  highlight_ffc873: {
+    backgroundColor: '#ffc873'
+  },
 };
 
 export default styles;

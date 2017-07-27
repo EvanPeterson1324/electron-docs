@@ -10,6 +10,8 @@ const User = require('./models/models').User;
 const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server); //io wants the server version with http
+let usedColors = [];
+let colorPicker = ['#FFA500','#6897bb','#343417','#3b5998','#ffd700','#ffc873']
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -45,10 +47,20 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   socket.on('newEvent', function() {
   });
 
+  // socket.on('joinRoom', function(docId) {
+  //   socket.roomId = docId;
+  //   console.log('JOINED ROOM', socket.roomId);
+  //   socket.join(docId);
+  // })
   socket.on('joinRoom', function(docId) {
-    socket.roomId = docId;
-    console.log('JOINED ROOM', socket.roomId);
-    socket.join(docId);
+      socket.Color = null;
+      socket.Color = colorPicker[0];
+      usedColors.push(colorPicker.splice(0,1)[0])
+      socket.roomId = docId;
+      socket.emit('socketId', socket.id)
+      console.log('JOINED ROOM', socket.roomId);
+      socket.emit('socketColor', socket.Color)
+      socket.join(docId);
   })
 
   socket.on('liveEdit', (stringRaw) => {
@@ -56,8 +68,14 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
     socket.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
 
+  socket.on('cursorMove', selection => {
+    console.log('selection', selection);
+    socket.broadcast.to(socket.theOneRoom).emit('receiveNewCursor', selection);
+  });
+
   socket.on('disconnect', () => {
     if (socket.roomId) {
+      colorPicker.push(usedColors.splice(usedColors.indexOf(socket.Color), 1)[0])
       socket.leave(socket.roomId);
       console.log('LEFT SOCKET');
     }

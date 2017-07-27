@@ -15,6 +15,13 @@ const styleMap ={
   'FONT_RED': styles.fontRed,
   'FONT_BLUE': styles.fontBlue,
   'FONT_GRAY': styles.fontGray,
+  'BACKGROUND_COLOUR': styles.backgroundRed,
+  '#FFA500':  styles.highlight_FFA500,
+  '#6897bb': styles.highlight_6897bb,
+  '#343417': styles.highlight_343417,
+  '#3b5998': styles.highlight_3b5998,
+  '#ffd700': styles.highlight_ffd700,
+  '#ffc873': styles.highlight_ffc873
 };
 
 const blockRenderMap = Map({
@@ -71,13 +78,45 @@ class TextEditor extends React.Component {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
-  };
-componentWillUnmount() {
-  this.props.history.currentDoc = null;
-  this.socket.disconnect();
-};
 
-generateRevisionsList(closeModalFunc) {
+    this.socket.on('socketId', (socketId) =>{
+
+      this.setState({socketId: socketId});
+      console.log('this is the state after socket id is returned', this.state);
+    });
+
+    this.socket.on('socketColor', socketColor => {
+      this.setState({socketColor: socketColor});
+      console.log('THE SOCKET COLOR HAS BEEN SET BY CLIENT to', this.state.socketColor);
+    });
+
+    this.socket.on('receiveNewCursor', incomingSelectionObj => {
+      console.log('inc', incomingSelectionObj);
+
+      let editorState = this.state.editorState;
+      const ogEditorState = editorState;
+      const ogSelection = editorState.getSelection();
+
+      const incomingSelectionState = ogSelection.merge(incomingSelectionObj);
+
+      const temporaryEditorState = EditorState.forceSelection(ogEditorState, incomingSelectionState);
+
+      this.setState({ editorState : temporaryEditorState}, () => {
+        const winSel = window.getSelection();
+        const range = winSel.getRangeAt(0);
+        const rects = range.getClientRects()[0];
+        const { top, left, bottom } = rects;
+        this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
+      });
+    });
+  };
+
+  componentWillUnmount() {
+    this.props.history.currentDoc = null;
+    this.socket.disconnect();
+  };
+
+  generateRevisionsList(closeModalFunc) {
     if (!this.state.thisDoc || this.state.thisDoc.versions <= 0) {
       return <p>You have no revisions!</p>;
     }
@@ -85,25 +124,51 @@ generateRevisionsList(closeModalFunc) {
       return (
         <button
           onClick={() => {this.loadDiffVersion(currentVersion, closeModalFunc);}}>
-            <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
+          <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
         </button>
       );
     });
   };
 
-loadDiffVersion(version, closeModalFunc){
-  // set the state to a different version
-  var content = convertFromRaw(JSON.parse(version.content));
-  this.setState({ editorState: EditorState.createWithContent(content) });
-  closeModalFunc();
-}
+  loadDiffVersion(version, closeModalFunc){
+    // set the state to a different version
+    var content = convertFromRaw(JSON.parse(version.content));
+    this.setState({ editorState: EditorState.createWithContent(content) });
+    closeModalFunc();
+  }
 
-onChange(editorState) {
-  this.setState({editorState: editorState});
-  const raw = convertToRaw(editorState.getCurrentContent());
-  const stringRaw = JSON.stringify(raw);
-  this.socket.emit('liveEdit', stringRaw);
-}
+  // onChange(editorState) {
+  //   this.setState({editorState: editorState});
+  //   const raw = convertToRaw(editorState.getCurrentContent());
+  //   const stringRaw = JSON.stringify(raw);
+  //   this.socket.emit('liveEdit', stringRaw);
+  // }
+  onChange(editorState) {
+    const selection = editorState.getSelection();
+
+    if (this.previousHighlight) {
+      editorState = EditorState.acceptSelection(editorState, this.previousHighlight);
+      editorState = RichUtils.toggleInlineStyle(editorState, this.state.socketColor);
+      editorState = EditorState.acceptSelection(editorState, selection);
+      this.previousHighlight = null;
+    }
+    if (selection.getStartOffset() === selection.getEndOffset()) {
+      this.socket.emit('cursorMove', selection);
+    } else {
+      editorState = RichUtils.toggleInlineStyle(editorState, this.state.socketColor);
+      this.previousHighlight = editorState.getSelection();
+    }
+
+    const contentState = editorState.getCurrentContent();
+
+    const raw = convertToRaw(contentState);
+    const stringRaw = JSON.stringify(raw);
+    console.log('STRINGRAW FROM CLIENT', stringRaw);
+    this.socket.emit('liveEdit', stringRaw);
+
+    this.setState({editorState: editorState});
+  }
+
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {
@@ -255,69 +320,69 @@ onChange(editorState) {
     return (
       <div id="body">
         <div className="alignSB">
-        <button
-          style={styles.buttonLarge}
-          onClick={() => {this.setState({willRedirect: true});}}>
-          <span><i className="fa fa-arrow-left" aria-hidden="true"></i> Documents List</span>
-        </button>
-        <button
-          style={styles.buttonSave}
-          onClick={this.handleSaveDocument}
-          >
-          <span><i className="fa fa-floppy-o" aria-hidden="true"></i> Save</span>
-        </button>
-        </div>
-        <h1 style={styles.title}>🗒️  {this.state.title}</h1>
-        <h3 style={styles.h3}><b>By: {this.state.author}</b></h3>
-        <h3 style={styles.h3}>Share this document ID with your collaborators: <b>{this.state.docId}</b></h3>
-        <div style={styles.allButTitle}>
-          <div style={styles.toolbar}>
-            <button style={styles.buttonflatG} onClick={() => this.makeFontGray()}>
-              <i className="fa fa-font" aria-hidden="true"></i>
+          <button
+            style={styles.buttonLarge}
+            onClick={() => {this.setState({willRedirect: true});}}>
+            <span><i className="fa fa-arrow-left" aria-hidden="true"></i> Documents List</span>
+          </button>
+          <button
+            style={styles.buttonSave}
+            onClick={this.handleSaveDocument}
+            >
+              <span><i className="fa fa-floppy-o" aria-hidden="true"></i> Save</span>
             </button>
-            <button style={styles.buttonflatR} onClick={() => this.makeFontRed()}>
-              <i className="fa fa-font" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatB} onClick={() => this.makeFontBlue()}>
-              <i className="fa fa-font" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatGR} onClick={() => this.h1()}>H1</button>
-            <button style={styles.buttonflatGR} onClick={() => this.h2()}>H2</button>
-            <button style={styles.buttonflatGR} onClick={() => this.h3()}>H3</button>
-            <button style={styles.buttonflat} onClick={() => this.makeItalic()}>
-              <i className="fa fa-italic" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflat} onClick={() => this.makeBold()}>
-              <i className="fa fa-bold" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflat} onClick={() => this.makeItalic()}>
-              <i className="fa fa-italic" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflat} onClick={() => this.makeUnderline()}>
-              <i className="fa fa-underline" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflat} onClick={() => this.makeCode()}>
-              <i className="fa fa-code" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflat} onClick={() => this.makeStrikethrough()}>
-              <i className="fa fa-strikethrough" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatP} onClick={() => this.enumerate()}>
-              <i className="fa fa-list-ol" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatP} onClick={() => this.unorderedList()}>
-              <i className="fa fa-list-ul" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatT} onClick={() => this.alignLeft()}>
-              <i className="fa fa-align-left" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatT} onClick={() => this.alignCenter()}>
-              <i className="fa fa-align-center" aria-hidden="true"></i>
-            </button>
-            <button style={styles.buttonflatT} onClick={() => this.alignRight()}>
-              <i className="fa fa-align-right" aria-hidden="true"></i>
-            </button>
-            {/* <button style={styles.buttonRevHist} onClick={() => this.myFunc()}>
+          </div>
+          <h1 style={styles.title}>🗒️  {this.state.title}</h1>
+          <h3 style={styles.h3}><b>By: {this.state.author}</b></h3>
+          <h3 style={styles.h3}>Share this document ID with your collaborators: <b>{this.state.docId}</b></h3>
+          <div style={styles.allButTitle}>
+            <div style={styles.toolbar}>
+              <button style={styles.buttonflatG} onClick={() => this.makeFontGray()}>
+                <i className="fa fa-font" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatR} onClick={() => this.makeFontRed()}>
+                <i className="fa fa-font" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatB} onClick={() => this.makeFontBlue()}>
+                <i className="fa fa-font" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatGR} onClick={() => this.h1()}>H1</button>
+              <button style={styles.buttonflatGR} onClick={() => this.h2()}>H2</button>
+              <button style={styles.buttonflatGR} onClick={() => this.h3()}>H3</button>
+              <button style={styles.buttonflat} onClick={() => this.makeItalic()}>
+                <i className="fa fa-italic" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflat} onClick={() => this.makeBold()}>
+                <i className="fa fa-bold" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflat} onClick={() => this.makeItalic()}>
+                <i className="fa fa-italic" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflat} onClick={() => this.makeUnderline()}>
+                <i className="fa fa-underline" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflat} onClick={() => this.makeCode()}>
+                <i className="fa fa-code" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflat} onClick={() => this.makeStrikethrough()}>
+                <i className="fa fa-strikethrough" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatP} onClick={() => this.enumerate()}>
+                <i className="fa fa-list-ol" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatP} onClick={() => this.unorderedList()}>
+                <i className="fa fa-list-ul" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatT} onClick={() => this.alignLeft()}>
+                <i className="fa fa-align-left" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatT} onClick={() => this.alignCenter()}>
+                <i className="fa fa-align-center" aria-hidden="true"></i>
+              </button>
+              <button style={styles.buttonflatT} onClick={() => this.alignRight()}>
+                <i className="fa fa-align-right" aria-hidden="true"></i>
+              </button>
+              {/* <button style={styles.buttonRevHist} onClick={() => this.myFunc()}>
               <span><i className="fa fa-history" aria-hidden="true"></i> See Revision History</span>
             </button> */}
             <RevisionHistoryModal generateRevisionsList={this.generateRevisionsList}/>
@@ -325,12 +390,12 @@ onChange(editorState) {
         </div>
         <div className="align">
           <div id="container">
-              <Editor
-                style={styles.editor}
-                editorState={this.state.editorState} onChange={(e) => {this.onChange(e);}}
-                customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
-                blockRenderMap={extendedBlockRenderMap}
-              />
+            <Editor
+              style={styles.editor}
+              editorState={this.state.editorState} onChange={(e) => {this.onChange(e);}}
+              customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
+              blockRenderMap={extendedBlockRenderMap}
+            />
           </div>
         </div>
       </div>
