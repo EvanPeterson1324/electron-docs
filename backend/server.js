@@ -52,8 +52,6 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   })
 
   socket.on('liveEdit', (stringRaw) => {
-    // var stringRaw = JSON.parse(obj).stringRaw
-    // var roomId = JSON.parse(obj).docId
     console.log('BROADCASTING TO ', socket.roomId);
     socket.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });

@@ -64,14 +64,13 @@ class TextEditor extends React.Component {
       });
     }
     this.socket.on('broadcastEdit', stringRaw => {
-      // THE PROBLEM IS THAT NOTHING HITS THIS POINT SO EVEN THOUGH THE SERVER IS BROADCASTING,
-      // THE EDITOR ISN'T LISTENING
       console.log("GOT IT BACK FROM THE SERVER! TIME TO RENDER!", stringRaw);
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
   };
 componentWillUnmount() {
+  this.props.history.currentDoc = null;
   this.socket.disconnect();
 }
   onChange(editorState) {
@@ -80,17 +79,7 @@ componentWillUnmount() {
     const raw = convertToRaw(editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
     console.log('STRINGRAW FROM CLIENT', stringRaw);
-
     this.socket.emit('liveEdit', stringRaw);
-
-    // onChange(editorState) {
-    //   console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
-    //   this.setState({editorState: editorState});
-    //   const raw = convertToRaw(this.state.editorState.getCurrentContent());
-    //   const stringRaw = JSON.stringify(raw);
-    //   this.state.socket.emit('liveEdit', stringRaw);
-    //   // console.log('STRINGRAW FROM CLIENT', stringRaw);
-    // }
   }
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
