@@ -7,6 +7,8 @@ import styles from '../styles/styles';
 import '../styles/container.scss';
 import '../styles/blockstyles.scss';
 import io from 'socket.io-client';
+import moment from 'moment';
+import RevisionHistoryModal from './RevisionHistoryModal';
 
 const styleMap ={
   'STRIKETHROUGH': styles.strikethrough,
@@ -43,6 +45,7 @@ class TextEditor extends React.Component {
     };
     this.onChange = this.onChange.bind(this);
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
+    this.generateRevisionsList = this.generateRevisionsList.bind(this);
 
     this.socket = io('http://localhost:3000');
     this.socket.emit('joinRoom', this.state.docId)
@@ -72,13 +75,35 @@ class TextEditor extends React.Component {
 componentWillUnmount() {
   this.props.history.currentDoc = null;
   this.socket.disconnect();
+};
+
+generateRevisionsList(closeModalFunc) {
+    if (!this.state.thisDoc || this.state.thisDoc.versions <= 0) {
+      return <p>You have no revisions!</p>;
+    }
+    return this.state.thisDoc.versions.map((currentVersion) => {
+      return (
+        <button
+          onClick={() => {this.loadDiffVersion(currentVersion, closeModalFunc);}}>
+            <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
+        </button>
+      );
+    });
+  };
+
+loadDiffVersion(version, closeModalFunc){
+  // set the state to a different version
+  var content = convertFromRaw(JSON.parse(version.content));
+  this.setState({ editorState: EditorState.createWithContent(content) });
+  closeModalFunc();
 }
-  onChange(editorState) {
-    this.setState({editorState: editorState});
-    const raw = convertToRaw(editorState.getCurrentContent());
-    const stringRaw = JSON.stringify(raw);
-    this.socket.emit('liveEdit', stringRaw);
-  }
+
+onChange(editorState) {
+  this.setState({editorState: editorState});
+  const raw = convertToRaw(editorState.getCurrentContent());
+  const stringRaw = JSON.stringify(raw);
+  this.socket.emit('liveEdit', stringRaw);
+}
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {
@@ -292,9 +317,10 @@ componentWillUnmount() {
             <button style={styles.buttonflatT} onClick={() => this.alignRight()}>
               <i className="fa fa-align-right" aria-hidden="true"></i>
             </button>
-            <button style={styles.buttonRevHist} onClick={() => this.myFunc()}>
+            {/* <button style={styles.buttonRevHist} onClick={() => this.myFunc()}>
               <span><i className="fa fa-history" aria-hidden="true"></i> See Revision History</span>
-            </button>
+            </button> */}
+            <RevisionHistoryModal generateRevisionsList={this.generateRevisionsList}/>
           </div>
         </div>
         <div className="align">
@@ -305,7 +331,6 @@ componentWillUnmount() {
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
-          {/* <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script> */}
           </div>
         </div>
       </div>
