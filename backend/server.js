@@ -55,7 +55,7 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
     // var stringRaw = JSON.parse(obj).stringRaw
     // var roomId = JSON.parse(obj).docId
     console.log('BROADCASTING TO ', socket.roomId);
-    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
+    socket.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
 
   socket.on('disconnect', () => {

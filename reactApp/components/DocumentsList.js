@@ -4,7 +4,6 @@ import {Editor, EditorState} from 'draft-js';
 import styles from '../styles/styles';
 import '../styles/container.scss';
 import { Link, Redirect } from 'react-router-dom';
-import io from 'socket.io-client'
 
 class DocumentsList extends React.Component {
   constructor(props) {
@@ -15,9 +14,9 @@ class DocumentsList extends React.Component {
       newDocName: '',
       newDocPassword: '',
       docId: '',
-      willRedirect: false,
-      socket: null,
+      willRedirect: false
     };
+
     this.createDoc = this.createDoc.bind(this);
     this.attemptColaboration = this.attemptColaboration.bind(this);
     this.generateDocumentList = this.generateDocumentList.bind(this);
@@ -28,8 +27,6 @@ class DocumentsList extends React.Component {
 
   componentDidMount() {
     this.setState({willRedirect: false});
-    var socket = io.connect('http://localhost:3000');
-    this.setState({socket: socket});
 
     axios({
       method: 'get',
@@ -109,8 +106,6 @@ class DocumentsList extends React.Component {
   openDocumentClick(doc) {
     this.props.history.newDocId = doc._id;
     this.props.history.currentDoc = doc;
-
-    this.state.socket.emit('joinRoom', doc._id);
   }
 
   render() {

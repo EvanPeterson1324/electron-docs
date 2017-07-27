@@ -77,7 +77,7 @@ componentWillUnmount() {
   onChange(editorState) {
     console.log('E', editorState.getCurrentContent());
     this.setState({editorState: editorState});
-    const raw = convertToRaw(this.state.editorState.getCurrentContent());
+    const raw = convertToRaw(editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
     console.log('STRINGRAW FROM CLIENT', stringRaw);
 
