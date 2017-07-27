@@ -49,7 +49,7 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
     socket.roomId = docId;
     console.log('JOINED ROOM', socket.roomId);
     socket.join(docId);
-  })
+  });
 
   socket.on('liveEdit', (stringRaw) => {
     console.log('BROADCASTING TO ', socket.roomId);
@@ -61,7 +61,7 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
       socket.leave(socket.roomId);
       console.log('LEFT SOCKET');
     }
-  })
+  });
 });
 // END SOCKET HANDLER --------------------------------------------------------
 

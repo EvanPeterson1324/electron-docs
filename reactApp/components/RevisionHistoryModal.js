@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import styles from '../styles/styles';
+// import moment from 'moment';
 const customStyles = {
   content : {
     top                   : '50%',
@@ -13,8 +14,8 @@ const customStyles = {
 };
 
 class RevisionHistoryModal extends React.Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
 
     this.state = {
       modalIsOpen: false
@@ -43,6 +44,14 @@ class RevisionHistoryModal extends React.Component {
 
   }
 
+  getVersionList() {
+    const revisionsList = this.props.generateRevisionsList;
+    if(!this.state.modelIsOpen) {
+      return <ul>{revisionsList()}</ul>;
+    }
+    return <p>"Model not open"</p>;
+  }
+
   render() {
     return (
       <div>
@@ -59,7 +68,7 @@ class RevisionHistoryModal extends React.Component {
           contentLabel="View Revision History"
           >
             <h2 ref={subtitle => this.subtitle = subtitle}>Revisions</h2>
-
+            {this.getVersionList()}
           </Modal>
         </div>
     );

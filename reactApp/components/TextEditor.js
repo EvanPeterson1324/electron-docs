@@ -2,12 +2,14 @@ import React from 'react';
 import {Editor, EditorState, RichUtils, DefaultDraftBlockRenderMap, convertToRaw, convertFromRaw} from 'draft-js';
 import axios from 'axios';
 import { Map } from 'immutable';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import styles from '../styles/styles';
 import '../styles/container.scss';
 import '../styles/blockstyles.scss';
 import io from 'socket.io-client';
 import RevisionHistoryModal from './RevisionHistoryModal';
+import moment from 'moment';
+
 const styleMap ={
   'STRIKETHROUGH': styles.strikethrough,
   'FONT_RED': styles.fontRed,
@@ -43,7 +45,8 @@ class TextEditor extends React.Component {
     };
     this.onChange = this.onChange.bind(this);
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
-
+    this.loadDiffVersion = this.loadDiffVersion.bind(this);
+    this.generateRevisionsList = this.generateRevisionsList.bind(this);
     this.socket = io('http://localhost:3000');
     this.socket.emit('joinRoom', this.state.docId);
   }
@@ -55,6 +58,7 @@ class TextEditor extends React.Component {
         author: this.props.history.currentDoc.author,
         docId: this.props.history.currentDoc._id,
         collaborators: this.props.history.currentDoc.collaborators,
+        thisDoc: this.props.history.currentDoc
       });
     }
     if (this.state.thisDoc && this.state.thisDoc.versions.length > 0) {
@@ -224,6 +228,28 @@ class TextEditor extends React.Component {
     .catch(err => console.log("Save doc Err: ", err));
   }
 
+  loadDiffVersion(version){
+
+  }
+  generateRevisionsList() {
+    if (!this.state.thisDoc || this.state.thisDoc.versions <= 0) {
+      return <p>You have no revisions!</p>;
+    }
+
+    return this.state.thisDoc.versions.map((currentVersion) => {
+      return (
+        <Link
+          to="/textEditor"
+          onClick={() => {this.loadDiffVersion(currentVersion);}}>
+          <p style={styles.p}>
+            <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
+          </p>
+        </Link>
+      );
+
+    });
+
+  }
 
   render() {
     if(this.state.willRedirect) {
@@ -297,7 +323,8 @@ class TextEditor extends React.Component {
             <button style={styles.buttonflatT} onClick={() => this.alignRight()}>
               <i className="fa fa-align-right" aria-hidden="true"></i>
             </button>
-            <RevisionHistoryModal />
+            <RevisionHistoryModal
+              generateRevisionsList={this.generateRevisionsList}/>
           </div>
         </div>
         <div className="align">
@@ -308,7 +335,6 @@ class TextEditor extends React.Component {
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
-          {/* <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script> */}
           </div>
         </div>
       </div>

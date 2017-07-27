@@ -78,7 +78,7 @@ class DocumentsList extends React.Component {
         });
       }
     });
-  };
+  }
 
   attemptCollaboration() {
     axios({
@@ -94,10 +94,10 @@ class DocumentsList extends React.Component {
       if (resp.data.success) {
         this.props.history.newDocId = this.state.collabDocId;
         this.props.history.currentDoc = resp.data.doc;
-        this.setState({willRedirect: true})
+        this.setState({willRedirect: true});
       }
-    })
-  };
+    });
+  }
 
   generateDocumentList() {
     if (this.state.documents.length > 0) {
@@ -112,11 +112,12 @@ class DocumentsList extends React.Component {
             </Link>
           );
         }
+        return "";
       });
     } else {
       return <p>You have no docs :(</p>
-    };
-  };
+    }
+  }
 
   generateCollaborationList() {
     if (this.state.documents.length > 0) {
