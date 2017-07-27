@@ -24,7 +24,7 @@ class RevisionHistoryModal extends React.Component {
     this.openModal = this.openModal.bind(this);
     this.afterOpenModal = this.afterOpenModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+    this.getVersionList = this.getVersionList.bind(this);
   }
 
   openModal() {
@@ -40,14 +40,10 @@ class RevisionHistoryModal extends React.Component {
     this.setState({modalIsOpen: false});
   }
 
-  handleSubmit() {
-
-  }
-
   getVersionList() {
     const revisionsList = this.props.generateRevisionsList;
     if(!this.state.modelIsOpen) {
-      return <ul>{revisionsList()}</ul>;
+      return <ul>{revisionsList(this.closeModal)}</ul>;
     }
     return <p>"Model not open"</p>;
   }

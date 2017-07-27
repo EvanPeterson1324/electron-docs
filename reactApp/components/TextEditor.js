@@ -228,23 +228,24 @@ class TextEditor extends React.Component {
     .catch(err => console.log("Save doc Err: ", err));
   }
 
-  loadDiffVersion(version){
-
+  loadDiffVersion(version, closeModalFunc){
+    // set the state to a different version
+    var content = convertFromRaw(JSON.parse(version.content));
+    this.setState({ editorState: EditorState.createWithContent(content) });
+    closeModalFunc();
   }
-  generateRevisionsList() {
+
+  generateRevisionsList(closeModalFunc) {
     if (!this.state.thisDoc || this.state.thisDoc.versions <= 0) {
       return <p>You have no revisions!</p>;
     }
 
     return this.state.thisDoc.versions.map((currentVersion) => {
       return (
-        <Link
-          to="/textEditor"
-          onClick={() => {this.loadDiffVersion(currentVersion);}}>
-          <p style={styles.p}>
+        <button
+          onClick={() => {this.loadDiffVersion(currentVersion, closeModalFunc);}}>
             <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
-          </p>
-        </Link>
+        </button>
       );
 
     });
