@@ -61,7 +61,8 @@ io.on('connection', socket => {
   // Editing in doc
   socket.on('liveEdit', stringRaw => {
     console.log('SERVER GOT THIS STRING', stringRaw);
-    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
+    // io.to(socket.roomId).emit('broadcastEdit', stringRaw);
+    socket.broadcast.emit('broadcastEdit', stringRaw);
   });
 
   socket.emit('socketId', socket.id);
@@ -82,7 +83,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login',
   passport.authenticate('local', {
-    successRedirect: '/user' , // TODO change the redirect link
+    successRedirect: '/user' ,
     failureRedirect: '/failureLogin',
     failureFlash: "Incorrect Login Credentials",
     successFlash: "Login Successful!"
@@ -95,10 +96,12 @@ app.post('/register', (req, res) => {
   var confirmPassword = req.body.confirmPassword;
 
   if(!isValidRegistration(username, password, confirmPassword)) {
-    res.send("Invalid Registration details!");
+    console.log("invalid!");
+    res.send({failure: "Invalid registration!"});
   }
+  console.log("valid!");
   saveUserInMongoDB(username, password);
-  res.end();
+  res.send({success: true});
 });
 
 // Login Success!
@@ -218,4 +221,15 @@ const saveUserInMongoDB = (username, password) => {
 // @TODO Use passport to validate that the registered user is valid?????
 const isValidRegistration = (username, password, confirmPassword) => {
   return true;
+  // if(password === confirmPassword) {
+  //   User.findOne({username})
+  //   .then(user => {
+  //     if(!user) {
+  //       return true;
+  //     }
+  //     return false;
+  //   });
+  // }
+  // console.log("INVALID REGISTER INFO");
+  // return false;
 };

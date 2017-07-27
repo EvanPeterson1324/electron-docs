@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import styles from '../styles/styles';
 import '../styles/container.scss';
 import '../styles/blockstyles.scss';
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
 const styleMap ={
   'STRIKETHROUGH': styles.strikethrough,

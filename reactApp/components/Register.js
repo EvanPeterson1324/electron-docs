@@ -34,8 +34,9 @@ class Register extends React.Component {
       }
     })
       .then((resp) => {
-        this.setState({willRedirect: true});
-        console.log("Register Response: ", resp);
+        if(resp.data.success) {
+          this.setState({willRedirect: true});
+        }
       })
       .catch(err => console.log("Register Error Response: ", err));
   }
