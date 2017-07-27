@@ -40,7 +40,8 @@ class TextEditor extends React.Component {
       collaborators: null,
       willRedirect: false,
       thisDoc: this.props.history.currentDoc,
-      socket: null
+      socket: null,
+      socketId: null
     };
     this.onChange = this.onChange.bind(this);
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
@@ -63,12 +64,21 @@ class TextEditor extends React.Component {
     }
     this.socket = io.connect('http://localhost:3000');
     this.socket.emit('joinRoom', this.state.docId);
-    this.setState({socket: this.socket});
+    this.setState({
+      socket: this.socket,
+    });
     this.socket.on('broadcastEdit', stringRaw => {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
+    
+    this.socket.on('socketId', (socketId) =>{
+      this.setState({socketId: socketId})
+      console.log('this is the state after socket id is returned', this.state);
+    })
   }
+
+
   onChange(editorState) {
     console.log("THIS IS THE STATE", this.state);
     this.setState({editorState: editorState});

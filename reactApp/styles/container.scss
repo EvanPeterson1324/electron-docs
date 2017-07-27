@@ -114,3 +114,22 @@ a {
   color: #b2b2b2;
   margin-right: 15px;
 }
+
+$blue: #3ea5ce;
+$green: #99c712;
+$yellow: lighten(#ffba00, 5%);
+$red: #E53B3A;
+$purple: purple;
+$orange: orange;
+$darkblue: blue;
+
+$colors: $blue, $green, $yellow, $red, $purple, $orange, $darkblue;  
+
+$key: random( length($colors) );
+$nth: nth( $colors, $key );
+
+.public-DraftEditor-content {
+  color: $nth;
+  text-shadow: 0px 0px 0px #000;
+  -webkit-text-fill-color: transparent;
+}

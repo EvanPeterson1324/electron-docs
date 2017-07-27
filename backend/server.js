@@ -10,7 +10,7 @@ const User = require('./models/models').User;
 const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-console.log("hello");
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -48,7 +48,10 @@ io.on('connection', socket => {
   socket.on('joinRoom', function(docId) {
     socket.roomId = docId;
     socket.join(docId);
+    console.log('socketId', socket.id);
   })
+
+  socket.emit('socketId', socket.id)
 
   socket.on('liveEdit', stringRaw => {
     console.log('SERVER GOT THIS STRING', stringRaw);
