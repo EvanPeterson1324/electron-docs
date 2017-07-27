@@ -1,6 +1,9 @@
 import React from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
+import styles from '../styles/styles';
+import '../styles/container.scss';
 
 const customStyles = {
   content : {
@@ -9,7 +12,12 @@ const customStyles = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    backgroundColor       : '#f4f5f7',
+    borderStyle           : 'none',
+    width                 : '400px',
+    padding               : '30px',
+    boxShadow             : '0 2px 8px rgba(0, 0, 0, 0.1)'
   }
 };
 
@@ -19,7 +27,8 @@ class AddNewDocModal extends React.Component {
     this.state = {
       docName: '',
       docPassword: '',
-      modalIsOpen: false
+      modalIsOpen: false,
+      willRedirect: false,
     };
 
     this.openModal = this.openModal.bind(this);
@@ -33,8 +42,7 @@ class AddNewDocModal extends React.Component {
   }
 
   afterOpenModal() {
-    // references are now sync'd and can be accessed.
-    this.subtitle.style.color = '#f00';
+    this.subtitle.style.fontWeight = '300';
   }
 
   closeModal() {
@@ -42,14 +50,36 @@ class AddNewDocModal extends React.Component {
   }
 
   handleSubmit() {
-    const createDoc = this.props.createDoc;
-    createDoc();  
-    this.closeModal();
-  }
+    axios({
+      method: 'post',
+      url: 'http://localhost:3000/createDoc',
+      data: {
+        title: this.state.docName,
+        password: this.state.docPassword
+      }
+    })
+    .then(resp => {
+      if(resp.data.success) {
+        this.props.history.newDocId = resp.data.docId;
+        this.props.history.newDocTitle = resp.data.title;
+
+        this.setState({
+          willRedirect: true,
+        });
+        this.closeModal();
+      }
+    });
+  };
+
   render() {
+    if (this.state.willRedirect) {
+      return (<Redirect to="/textEditor"/>);
+    }
     return (
       <div>
-        <button onClick={this.openModal}>Add Document!</button>
+        <button onClick={this.openModal} style={styles.buttonLong}>
+          <span><i className="fa fa-plus-circle" aria-hidden="true"></i> New Document</span>
+        </button>
         <Modal
           isOpen={this.state.modalIsOpen}
           onAfterOpen={this.afterOpenModal}
@@ -57,26 +87,25 @@ class AddNewDocModal extends React.Component {
           style={customStyles}
           contentLabel="Add a new Document!"
           >
-
-            <h2 ref={subtitle => this.subtitle = subtitle}>Enter a document name and password</h2>
-
+            <h2 ref={subtitle => this.subtitle = subtitle}>Enter a doc title and password</h2>
             <form
               onSubmit={this.handleSubmit}>
               <input
                 type="text"
-                placeholder="Document Name"
+                placeholder="Document Title"
+                style={styles.inputBox}
                 value={this.state.docName}
                 onChange={(e) => this.setState({docName: e.target.value})}
               /> <br></br>
+              <div className="spacer10"></div>
               <input
                 type="password"
                 placeholder="Document Password"
+                style={styles.inputBox}
                 value={this.state.docPassword}
                 onChange={(e) => this.setState({docPassword: e.target.value})}
               /> <br></br>
-              <input
-                type="submit"
-              />
+              <input type="submit" style={styles.buttonMedModal}/>
             </form>
           </Modal>
         </div>

@@ -26,14 +26,13 @@ const styles = {
   title: {
     fontSize: '30px',
     color: '#4f4f4f',
-    marginLeft: '30px',
     textTransform: 'none',
     letterSpacing: '0'
   },
   h2: {
     fontSize: '20px',
-    color: '#4f4f4f',
     marginLeft: '30px',
+    color: '#4f4f4f',
     textTransform: 'none',
     letterSpacing: '0'
   },
@@ -393,6 +392,25 @@ const styles = {
   buttonMedNoMarginO: {
     position: 'relative',
     margin: '10px',
+    verticalAlign: 'top',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100px',
+    height: '30px',
+    borderRadius: '3px',
+    padding: '2px',
+    fontSize: '18px',
+    color: 'white',
+    textAlign: 'center',
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
+    background: '#FBC02D',
+    border: '0',
+    borderBottom: '1px solid #F9A825',
+    boxShadow: 'inset 0 -2px #F9A825',
+  },
+  buttonMedModal: {
+    position: 'relative',
+    marginTop: '10px',
     verticalAlign: 'top',
     justifyContent: 'center',
     alignItems: 'center',

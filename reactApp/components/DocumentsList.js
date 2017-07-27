@@ -90,7 +90,6 @@ class DocumentsList extends React.Component {
       }
     })
     .then((resp) => {
-      console.log('COLLABORATE RESP', resp);
       if (resp.data.success) {
         this.props.history.newDocId = this.state.collabDocId;
         this.props.history.currentDoc = resp.data.doc;
@@ -146,75 +145,15 @@ class DocumentsList extends React.Component {
 
     render() {
       if(this.state.willRedirect) {
-        return (
-          <Redirect to="/textEditor"/>
-        );
+        return (<Redirect to="/textEditor"/>);
       }
       console.log('THESE ARE MY DOCS', this.state.documents);
       return(
-        <div>
+        <div className="alignLeft50">
           <h1 style={styles.title}>👋🏼  Hey {this.props.history.username}!</h1>
           <div className="alignRow">
-            <input
-              type="text"
-              value={this.state.newDoc}
-              onChange={(e) => {
-                this.setState({
-                  newDocName: e.target.value
-                });
-              }}
-              style={styles.inputBox}
-              placeholder="e.g. Resume">
-            </input>
-            <input
-              type="text"
-              value={this.state.newDocPassword}
-              onChange={(e) => {
-                this.setState({
-                  newDocPassword: e.target.value
-                });
-              }}
-              style={styles.inputBox}
-              placeholder="Document Password">
-            </input>
-            <button
-              style={styles.buttonLong}
-              onClick={() => {this.createDoc();}}>
-              <span><i className="fa fa-plus-circle" aria-hidden="true"></i> New Document</span>
-            </button>
-{/* MODAL */}
             <NewDocModal createDoc={this.createDoc} history={this.props.history}/>
-          </div>
-          <div className="alignRow">
-            <input
-              type="text"
-              style={styles.inputBox}
-              placeholder="Document ID here"
-              value={this.state.collabDocId}
-              onChange={(e) => {
-                this.setState({
-                  collabDocId: e.target.value
-                });
-              }}>
-            </input>
-            <input
-              type="text"
-              style={styles.inputBox}
-              placeholder="Document password here"
-              value={this.state.collabDocPassword}
-              onChange={(e) => {
-                this.setState({
-                  collabDocPassword: e.target.value
-                });
-              }}>
-            </input>
-            <button
-              style={styles.buttonLongY}
-              onClick={() => {this.attemptCollaboration();}}>
-              <span><i className="fa fa-users" aria-hidden="true"></i> Collaborate</span>
-            </button>
-{/* MODAL */}
-          <CollaborateDocModal attemptCollaboration={this.attemptCollaboration} history={this.props.history}/>
+            <CollaborateDocModal attemptCollaboration={this.attemptCollaboration} history={this.props.history}/>
           </div>
           <div className="spacer"></div>
           <div className="alignRow">
