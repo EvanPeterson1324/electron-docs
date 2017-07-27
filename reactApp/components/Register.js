@@ -51,6 +51,7 @@ class Register extends React.Component {
       );
     }
     return(
+      <div>
       <div className="alignCenter">
         <div className="spacer50"></div>
         <form onSubmit={this.makeRegisterRequest}>
@@ -64,22 +65,32 @@ class Register extends React.Component {
               value={this.state.username}
               onChange={this.handleUsernameChange}></input>
           </div>
-            <p>Password</p>
-            <input
-              type="password"
-              placeholder="Password"
-              value={this.state.password}
-              onChange={this.handlePasswordChange}></input> <br></br>
-              <p> Confirm Password </p>
+          <div className="alignRow">
+            <span className="icon"><i className="fa fa-lock" aria-hidden="true"></i></span>
+              <input
+                type="password"
+                placeholder="Password"
+                style={styles.inputBox}
+                value={this.state.password}
+                onChange={this.handlePasswordChange}>
+              </input> <br></br>
+          </div>
+          <div className="alignRow">
+            <span className="icon"><i className="fa fa-lock" aria-hidden="true"></i></span>
               <input
                 type="password"
                 placeholder="Confirm Password"
+                style={styles.inputBox}
                 value={this.state.confirmPassword}
-                onChange={this.handleConfirmPwChange}></input> <br></br>
-                <input
-                  type="submit"></input>
+                onChange={this.handleConfirmPwChange}>
+              </input><br></br>
+          </div>
+          <div className="alignRowC">
+              <input type="submit" style={styles.buttonMedNoMarginG}></input>
+              <Link to="/login" style={styles.buttonMedNoMarginO}>Login</Link>
+          </div>
         </form>
-        <Link to="/login">Login</Link>
+      </div>
       </div>
     );
   }
