@@ -188,6 +188,79 @@ app.post('/save', (req, res) => {
   });
 });
 
+app.post('/collaborate', (req, res) => {
+  var docId = req.body.docId;
+  var password = req.body.password;
+
+  Doc.findById(docId)
+  .then((doc) => {
+    if (doc.password === password) {
+      doc.collaborators.push(req.user._id);
+      doc.save((err) => {
+        if (err) {
+          res.json({failure: err});
+        } else {
+          User.findById(req.user._id)
+          .then((user) => {
+            user.docs.push({
+              id: docId,
+              isOwner: false
+            });
+            user.save((err) => {
+              if (err) {
+                res.json({failure: err});
+              } else {
+                res.json({success: true, doc: doc});
+              }
+            });
+          });
+        }
+      });
+    }
+    res.json({failure: "password doesnt match!"});
+  });
+});
+
+// app.post('/addCollab', (req, res) => {
+//   // find the doc by id, given by req.body.collabId
+//   const docId = req.body.collabId;
+//   Doc.findById(docId)
+//     .then((doc) => {
+//       if(!doc){
+//         res.json({failure: "The document you wish to collab on doesnt exist!"});
+//       }
+//       // the doc was found, so check the password sent by req.body.docPassword
+//       const password = req.body.docPassword;
+//       if(doc.password !== password) {
+//         res.json({failure: "You entered the incorrect document password!"});
+//       }
+//
+//       // The password is correct, so add the new collab to the doc collaborators ARRAY
+//       const username = req.body.username;
+//       doc.collaborators.push(username);
+//
+//       // Find the user that is collaborating and add this doc to their docs
+//       // with owner = false
+//       User.findOne({username})
+//         .then((user) => {
+//           if(!user) {
+//             res.json({failure: "Couldnt find the user in the DB!!!"});
+//           }
+//           // if we find the user, add the docId and isOwner = false
+//           user.docs.push({
+//             docId: doc._id,
+//             isOwner: false
+//           });
+//
+//           // Save the user and the doc
+//           user.save().then(() => doc.save()).then(() => {
+//             res.json({success: true});
+//           });
+//         });
+//
+//     });
+// });
+
 // Error handler/Catch 404 ---------------------------------------------------
 app.use((req, res, next) => {
   var err = new Error('Not Found');

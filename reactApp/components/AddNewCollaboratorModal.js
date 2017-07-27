@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-
+import axios from 'axios';
 const customStyles = {
   content : {
     top                   : '50%',
@@ -42,6 +42,23 @@ class AddNewCollaboratorModal extends React.Component {
   }
 
   handleSubmit() {
+    // Make a request to our backend to find the docid of the
+    // doc we want to collab on
+    axios({
+      method: 'post',
+      url: 'http://localhost:3000/collaborate',
+      data: {
+        docId: this.state.collabId,
+        password: this.state.docPassword,
+      }
+    })
+    .then(resp => {
+      if(resp.data.success) {
+        // we were able to add the collaborator so now we can close the modal
+        this.closeModal();
+      }
+    });
+
 
   }
 

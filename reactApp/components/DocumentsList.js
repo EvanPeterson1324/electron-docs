@@ -118,7 +118,10 @@ class DocumentsList extends React.Component {
         </div>
 
         <div className="alignRow">
-          {/* <AddNewCollaboratorModal /> */}
+          <AddNewCollaboratorModal
+            attemptColaboration={this.attemptColaboration}
+            history={this.props.history}
+          />
         </div>
 
 
