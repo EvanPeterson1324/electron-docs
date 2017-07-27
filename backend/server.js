@@ -5,11 +5,11 @@ const passport = require('passport');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
-const flash = require('connect-flash');
+const flash = require('connect-flash'); //why is this here
 const User = require('./models/models').User;
 const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
-const io = require('socket.io')(server);
+const io = require('socket.io')(server); //io wants the server version with http
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -24,7 +24,7 @@ mongoose.connection.on('connected', () => {
   console.log('Successfully connected to MongoDB! =)');
 });
 
-mongoose.connect(process.env.MONGODB_URI);                // Connect to our DB!
+mongoose.connect(process.env.MONGODB_URI);
 
 // BEGIN PASSPORT HERE -------------------------------------------------
 const session = require('express-session');
@@ -41,7 +41,7 @@ app.use(passport.session());
 // END PASSPORT HERE --------------------------------------------------------
 
 // SOCKET HANDLER ------------------------------------------------------------
-io.on('connection', socket => {
+io.on('connection', socket => {  //this is listening to all socket events, we don't ever emit 'connection'
   socket.on('newEvent', function() {
   });
 
@@ -51,22 +51,20 @@ io.on('connection', socket => {
     socket.join(docId);
   })
 
-  socket.on('liveEdit', (obj) => {
-    var stringRaw = JSON.parse(obj).stringRaw
-    var roomId = JSON.parse(obj).docId
-    console.log('BROADCASTING TO ', roomId);
-    io.to(roomId).emit('broadcastEdit', stringRaw);
+  socket.on('liveEdit', (stringRaw) => {
+    // var stringRaw = JSON.parse(obj).stringRaw
+    // var roomId = JSON.parse(obj).docId
+    console.log('BROADCASTING TO ', socket.roomId);
+    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
 
   socket.on('disconnect', () => {
     if (socket.roomId) {
       socket.leave(socket.roomId);
+      console.log('LEFT SOCKET');
     }
   })
 });
-
-
-
 // END SOCKET HANDLER --------------------------------------------------------
 
 app.get('/', (req, res) => {

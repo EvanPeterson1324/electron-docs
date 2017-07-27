@@ -6,7 +6,7 @@ import { Redirect } from 'react-router-dom';
 import styles from '../styles/styles';
 import '../styles/container.scss';
 import '../styles/blockstyles.scss';
-import io from 'socket.io-client'
+import io from 'socket.io-client';
 
 const styleMap ={
   'STRIKETHROUGH': styles.strikethrough,
@@ -40,10 +40,12 @@ class TextEditor extends React.Component {
       collaborators: null,
       willRedirect: false,
       thisDoc: this.props.history.currentDoc,
-      socket: null
     };
     this.onChange = this.onChange.bind(this);
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
+
+    this.socket = io('http://localhost:3000');
+    this.socket.emit('joinRoom', this.state.docId)
   }
 
   componentDidMount(){
@@ -61,20 +63,24 @@ class TextEditor extends React.Component {
         editorState: EditorState.createWithContent(content),
       });
     }
-    this.socket = io.connect('http://localhost:3000');
-    this.setState({socket: this.socket});
     this.socket.on('broadcastEdit', stringRaw => {
+      // THE PROBLEM IS THAT NOTHING HITS THIS POINT SO EVEN THOUGH THE SERVER IS BROADCASTING,
+      // THE EDITOR ISN'T LISTENING
       console.log("GOT IT BACK FROM THE SERVER! TIME TO RENDER!", stringRaw);
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
-  }
+  };
+componentWillUnmount() {
+  this.socket.disconnect();
+}
   onChange(editorState) {
     this.setState({editorState: editorState});
     const raw = convertToRaw(this.state.editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
-    this.state.socket.emit('liveEdit', JSON.stringify({stringRaw: stringRaw, docId: this.state.docId}));
-    // console.log('STRINGRAW FROM CLIENT', stringRaw);
+    console.log('STRINGRAW FROM CLIENT', stringRaw);
+
+    this.socket.emit('liveEdit', stringRaw);
   }
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
@@ -298,7 +304,7 @@ class TextEditor extends React.Component {
           <div id="container">
               <Editor
                 style={styles.editor}
-                editorState={this.state.editorState} onChange={(event) => {this.onChange(event);}}
+                editorState={this.state.editorState} onChange={(editorState) => {this.onChange(editorState);}}
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
