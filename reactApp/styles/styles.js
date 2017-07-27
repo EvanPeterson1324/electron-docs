@@ -107,6 +107,9 @@ const styles = {
   fontGray: {
     color: '#4f4f4f'
   },
+  backgroundRed: {
+    backgroundColor: '#c62828'
+  },
   buttonflatR: {
     active: {
       top: '1px',

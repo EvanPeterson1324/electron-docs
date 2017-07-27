@@ -13,6 +13,7 @@ const styleMap ={
   'FONT_RED': styles.fontRed,
   'FONT_BLUE': styles.fontBlue,
   'FONT_GRAY': styles.fontGray,
+  'BACKGROUND_RED': styles.backgroundRed
 };
 
 const blockRenderMap = Map({
@@ -68,19 +69,70 @@ class TextEditor extends React.Component {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
+    this.socket.on('receiveNewCursor', incomingSelectionObj => {
+      console.log('inc', incomingSelectionObj);
+
+    let editorState = this.state.editorState;
+   const ogEditorState = editorState;
+   const ogSelection = editorState.getSelection();
+
+   const incomingSelectionState = ogSelection.merge(incomingSelectionObj);
+
+   const temporaryEditorState = EditorState.forceSelection(ogEditorState, incomingSelectionState);
+
+   this.setState({ editorState : temporaryEditorState}, () => {
+     const winSel = window.getSelection();
+     const range = winSel.getRangeAt(0);
+     const rects = range.getClientRects()[0];
+     console.log("range", range);
+     console.log("rects", rects);
+     const { top, left, bottom } = rects;
+     this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
+   });
+ });
+
   };
 componentWillUnmount() {
   this.props.history.currentDoc = null;
   this.socket.disconnect();
 }
   onChange(editorState) {
-    console.log('E', editorState.getCurrentContent());
-    this.setState({editorState: editorState});
-    const raw = convertToRaw(editorState.getCurrentContent());
+    const selection = editorState.getSelection();
+
+   if (this.previousHighlight) {
+     editorState = EditorState.acceptSelection(editorState, this.previousHighlight);
+     editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
+     editorState = EditorState.acceptSelection(editorState, selection);
+   }
+
+   editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
+   this.previousHighlight = editorState.getSelection();
+
+    // const selection = editorState.getSelection();
+    //
+    // if(this.previousHighlight) {
+    //   editorState = EditorState.acceptSelection(editorState, this.previousHighlight);
+    //   editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
+    //   editorState = EditorState.acceptSelection(editorState, selection);
+    // }
+    //
+    // editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
+    // this.previousHighlight = editorState.getSelection();
+    //
+    // if (selection.getStartOffset() === selection.getEndOffset()) {
+    //   this.socket.emit('cursorMove', selection);
+    // }
+
+    const contentState = editorState.getCurrentContent();
+
+    const raw = convertToRaw(contentState);
     const stringRaw = JSON.stringify(raw);
     console.log('STRINGRAW FROM CLIENT', stringRaw);
     this.socket.emit('liveEdit', stringRaw);
+
+    this.setState({editorState: editorState});
   }
+
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {

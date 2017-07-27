@@ -56,6 +56,11 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
     socket.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
 
+  socket.on('cursorMove', selection => {
+    console.log('selection', selection);
+    socket.broadcast.to(socket.theOneRoom).emit('receiveNewCursor', selection);
+  });
+
   socket.on('disconnect', () => {
     if (socket.roomId) {
       socket.leave(socket.roomId);
