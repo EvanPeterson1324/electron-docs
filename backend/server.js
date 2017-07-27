@@ -10,7 +10,7 @@ const User = require('./models/models').User;
 const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-
+console.log("hello");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
