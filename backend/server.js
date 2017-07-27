@@ -46,6 +46,7 @@ io.on('connection', socket => {
   });
 
   socket.on('joinRoom', function(docId) {
+    console.log('SERVER SIDE SOCKETID', socket.id);
     socket.roomId = docId;
     socket.join(docId);
   })
@@ -103,6 +104,32 @@ app.get('/user', (req, res) => {
 // Login Failed!
 app.get('/failureLogin', (req, res) => {
   res.send({success: false});
+});
+
+app.post('/collaborate', (req, res) => {
+  var docId = req.body.docId;
+  var userId = req.user._id;
+  var docPassword = req.body.docPassword;
+
+  Doc.findById(docId)
+  .then((doc) => {
+    if (doc._id === docId && doc.password === docPassword) {
+      User.findById(userID)
+      .then((user) => {
+        user.docs.push({
+          id: docId,
+          isOwner: false,
+        })
+        user.save((err) => {
+          if (err) {
+            res.json({failure: err})
+          } else {
+            res.json({success: true})
+          }
+        })
+      })
+    }
+  })
 });
 
 app.get('/docs', (req, res) => {
