@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
+import styles from '../styles/styles';
 const customStyles = {
   content : {
     top                   : '50%',
@@ -11,13 +12,11 @@ const customStyles = {
   }
 };
 
-class CollaborateDocModal extends React.Component {
+class RevisionHistoryModal extends React.Component {
   constructor() {
     super();
 
     this.state = {
-      collabId: '',
-      docPassword: '',
       modalIsOpen: false
     };
 
@@ -41,47 +40,30 @@ class CollaborateDocModal extends React.Component {
   }
 
   handleSubmit() {
-    const attemptCollaboration = this.props.attemptCollaboration;
-    attemptCollaboration();
-    this.closeModal();
+
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.openModal}>Collaborate!</button>
+          <button
+            style={styles.buttonRevHist}
+            onClick={this.openModal}>
+            <span><i className="fa fa-history" aria-hidden="true"></i> See Revision History</span>
+          </button>
         <Modal
           isOpen={this.state.modalIsOpen}
           onAfterOpen={this.afterOpenModal}
           onRequestClose={this.closeModal}
           style={customStyles}
-          contentLabel="Become a new collaborator!"
+          contentLabel="View Revision History"
           >
+            <h2 ref={subtitle => this.subtitle = subtitle}>Revisions</h2>
 
-            <h2 ref={subtitle => this.subtitle = subtitle}>Enter the collab id and password to collaborate</h2>
-
-            <form
-              onSubmit={this.handleSubmit}>
-              <input
-                type="text"
-                placeholder="Collaboration Id"
-                value={this.state.collabId}
-                onChange={(e) => this.setState({collabId: e.target.value})}
-              /> <br></br>
-              <input
-                type="password"
-                placeholder="Document Password"
-                value={this.state.docPassword}
-                onChange={(e) => this.setState({docPassword: e.target.value})}
-              /> <br></br>
-              <input
-                type="submit"
-              />
-            </form>
           </Modal>
         </div>
     );
   }
 }
 
-export default CollaborateDocModal;
+export default RevisionHistoryModal;

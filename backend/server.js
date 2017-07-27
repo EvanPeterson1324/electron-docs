@@ -148,22 +148,22 @@ app.post('/collaborate', (req, res) => {
   Doc.findById(docId)
   .then((doc) => {
     if (doc.password === password) {
-      doc.collaborators.push(req.user._id)
+      doc.collaborators.push(req.user._id);
       doc.save((err) => {
         if (err) {
-          res.json({failure: err})
+          res.json({failure: err});
         } else {
           User.findById(req.user._id)
           .then((user) => {
             user.docs.push({
               id: docId,
               isOwner: false
-            })
+            });
             user.save((err) => {
               if (err) {
-                res.json({failure: err})
+                res.json({failure: err});
               } else {
-                res.json({success: true, doc: doc})
+                res.json({success: true, doc: doc});
               }
             });
           });

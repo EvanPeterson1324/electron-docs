@@ -7,7 +7,7 @@ import styles from '../styles/styles';
 import '../styles/container.scss';
 import '../styles/blockstyles.scss';
 import io from 'socket.io-client';
-
+import RevisionHistoryModal from './RevisionHistoryModal';
 const styleMap ={
   'STRIKETHROUGH': styles.strikethrough,
   'FONT_RED': styles.fontRed,
@@ -45,7 +45,7 @@ class TextEditor extends React.Component {
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
 
     this.socket = io('http://localhost:3000');
-    this.socket.emit('joinRoom', this.state.docId)
+    this.socket.emit('joinRoom', this.state.docId);
   }
 
   componentDidMount(){
@@ -55,7 +55,7 @@ class TextEditor extends React.Component {
         author: this.props.history.currentDoc.author,
         docId: this.props.history.currentDoc._id,
         collaborators: this.props.history.currentDoc.collaborators,
-      })
+      });
     }
     if (this.state.thisDoc && this.state.thisDoc.versions.length > 0) {
       var content = convertFromRaw(JSON.parse(this.state.thisDoc.versions[0].content));
@@ -68,11 +68,13 @@ class TextEditor extends React.Component {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
-  };
-componentWillUnmount() {
-  this.props.history.currentDoc = null;
-  this.socket.disconnect();
-}
+  }
+
+  componentWillUnmount() {
+    this.props.history.currentDoc = null;
+    this.socket.disconnect();
+  }
+
   onChange(editorState) {
     console.log('E', editorState.getCurrentContent());
     this.setState({editorState: editorState});
@@ -81,6 +83,7 @@ componentWillUnmount() {
     console.log('STRINGRAW FROM CLIENT', stringRaw);
     this.socket.emit('liveEdit', stringRaw);
   }
+
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {
@@ -294,9 +297,7 @@ componentWillUnmount() {
             <button style={styles.buttonflatT} onClick={() => this.alignRight()}>
               <i className="fa fa-align-right" aria-hidden="true"></i>
             </button>
-            <button style={styles.buttonRevHist} onClick={() => this.myFunc()}>
-              <span><i className="fa fa-history" aria-hidden="true"></i> See Revision History</span>
-            </button>
+            <RevisionHistoryModal />
           </div>
         </div>
         <div className="align">
