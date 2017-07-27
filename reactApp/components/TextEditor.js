@@ -64,16 +64,16 @@ class TextEditor extends React.Component {
     this.socket = io.connect('http://localhost:3000');
     this.setState({socket: this.socket});
     this.socket.on('broadcastEdit', stringRaw => {
+      console.log("GOT IT BACK FROM THE SERVER! TIME TO RENDER!", stringRaw);
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
   }
   onChange(editorState) {
-    console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
     this.setState({editorState: editorState});
     const raw = convertToRaw(this.state.editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
-    this.state.socket.emit('liveEdit', stringRaw);
+    this.state.socket.emit('liveEdit', JSON.stringify({stringRaw: stringRaw, docId: this.state.docId}));
     // console.log('STRINGRAW FROM CLIENT', stringRaw);
   }
   blockStyleFn(contentBlock) {
@@ -302,10 +302,9 @@ class TextEditor extends React.Component {
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
-          <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script>
+          {/* <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script> */}
           </div>
         </div>
-
       </div>
     );
   }

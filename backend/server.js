@@ -47,12 +47,15 @@ io.on('connection', socket => {
 
   socket.on('joinRoom', function(docId) {
     socket.roomId = docId;
+    console.log('JOINED ROOM', socket.roomId);
     socket.join(docId);
   })
 
-  socket.on('liveEdit', stringRaw => {
-    console.log('SERVER GOT THIS STRING', stringRaw);
-    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
+  socket.on('liveEdit', (obj) => {
+    var stringRaw = JSON.parse(obj).stringRaw
+    var roomId = JSON.parse(obj).docId
+    console.log('BROADCASTING TO ', roomId);
+    io.to(roomId).emit('broadcastEdit', stringRaw);
   });
 
   socket.on('disconnect', () => {
