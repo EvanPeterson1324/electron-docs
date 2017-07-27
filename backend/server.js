@@ -11,6 +11,9 @@ const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server); //io wants the server version with http
 
+let usedColors = [];
+let colorPicker = ['#FFA500','#6897bb','#343417','#3b5998','#ffd700','#ffc873']
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
@@ -46,7 +49,15 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   });
 
   socket.on('joinRoom', function(docId) {
+      socket.Color = null;
+      socket.Color = colorPicker[0];
+      usedColors.push(colorPicker.splice(0,1)[0])
+      socket.emit('socketColor', socket.Color)
+          console.log('LOOK HERE The color picked is', socket.Color);
+          console.log('COLOR PICKER NOW HAS', colorPicker);
+          console.log('USED COLORS NOW HAS', usedColors);
     socket.roomId = docId;
+    socket.emit('socketId', socket.id)
     console.log('JOINED ROOM', socket.roomId);
     socket.join(docId);
   })
@@ -63,9 +74,10 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
 
   socket.on('disconnect', () => {
     if (socket.roomId) {
-      socket.leave(socket.roomId);
-      console.log('LEFT SOCKET');
-    }
+       colorPicker.push(usedColors.splice(usedColors.indexOf(socket.Color), 1)[0])
+       socket.leave(socket.roomId);
+       console.log('LEFT SOCKET and COLOR IS BACK in ColorPicker Array', colorPicker);
+   }
   })
 });
 // END SOCKET HANDLER --------------------------------------------------------

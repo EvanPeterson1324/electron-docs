@@ -13,7 +13,13 @@ const styleMap ={
   'FONT_RED': styles.fontRed,
   'FONT_BLUE': styles.fontBlue,
   'FONT_GRAY': styles.fontGray,
-  'BACKGROUND_RED': styles.backgroundRed
+  'BACKGROUND_COLOUR': styles.backgroundRed,
+  '#FFA500':  styles.highlight_FFA500,
+  '#6897bb': styles.highlight_6897bb,
+  '#343417': styles.highlight_343417,
+  '#3b5998': styles.highlight_3b5998,
+  '#ffd700': styles.highlight_ffd700,
+  '#ffc873': styles.highlight_ffc873
 };
 
 const blockRenderMap = Map({
@@ -69,44 +75,54 @@ class TextEditor extends React.Component {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
+
+    this.socket.on('socketId', (socketId) =>{
+
+      this.setState({socketId: socketId});
+      console.log('this is the state after socket id is returned', this.state);
+    });
+
+    this.socket.on('socketColor', socketColor => {
+      this.setState({socketColor: socketColor});
+      console.log('THE SOCKET COLOR HAS BEEN SET BY CLIENT to', this.state.socketColor);
+    });
+
     this.socket.on('receiveNewCursor', incomingSelectionObj => {
       console.log('inc', incomingSelectionObj);
 
-    let editorState = this.state.editorState;
-   const ogEditorState = editorState;
-   const ogSelection = editorState.getSelection();
+      let editorState = this.state.editorState;
+      const ogEditorState = editorState;
+      const ogSelection = editorState.getSelection();
 
-   const incomingSelectionState = ogSelection.merge(incomingSelectionObj);
+      const incomingSelectionState = ogSelection.merge(incomingSelectionObj);
 
-   const temporaryEditorState = EditorState.forceSelection(ogEditorState, incomingSelectionState);
+      const temporaryEditorState = EditorState.forceSelection(ogEditorState, incomingSelectionState);
 
-   this.setState({ editorState : temporaryEditorState}, () => {
-     const winSel = window.getSelection();
-     const range = winSel.getRangeAt(0);
-     const rects = range.getClientRects()[0];
-     console.log("range", range);
-     console.log("rects", rects);
-     const { top, left, bottom } = rects;
-     this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
-   });
- });
+      this.setState({ editorState : temporaryEditorState}, () => {
+        const winSel = window.getSelection();
+        const range = winSel.getRangeAt(0);
+        const rects = range.getClientRects()[0];
+        const { top, left, bottom } = rects;
+        this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
+      });
+    });
+  }
 
-  };
-componentWillUnmount() {
-  this.props.history.currentDoc = null;
-  this.socket.disconnect();
-}
+  componentWillUnmount() {
+    this.props.history.currentDoc = null;
+    this.socket.disconnect();
+  }
   onChange(editorState) {
     const selection = editorState.getSelection();
 
-   if (this.previousHighlight) {
-     editorState = EditorState.acceptSelection(editorState, this.previousHighlight);
-     editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
-     editorState = EditorState.acceptSelection(editorState, selection);
-   }
+    if (this.previousHighlight) {
+      editorState = EditorState.acceptSelection(editorState, this.previousHighlight);
+      editorState = RichUtils.toggleInlineStyle(editorState, this.state.socketColor);
+      editorState = EditorState.acceptSelection(editorState, selection);
+      this.previousHighlight = null;
+    }
 
-   editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
-   this.previousHighlight = editorState.getSelection();
+
 
     // const selection = editorState.getSelection();
     //
@@ -119,9 +135,12 @@ componentWillUnmount() {
     // editorState = RichUtils.toggleInlineStyle(editorState, 'BACKGROUND_RED');
     // this.previousHighlight = editorState.getSelection();
     //
-    // if (selection.getStartOffset() === selection.getEndOffset()) {
-    //   this.socket.emit('cursorMove', selection);
-    // }
+    if (selection.getStartOffset() === selection.getEndOffset()) {
+      this.socket.emit('cursorMove', selection);
+    } else {
+      editorState = RichUtils.toggleInlineStyle(editorState, this.state.socketColor);
+      this.previousHighlight = editorState.getSelection();
+    }
 
     const contentState = editorState.getCurrentContent();
 
