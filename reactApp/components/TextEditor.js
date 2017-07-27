@@ -75,12 +75,22 @@ componentWillUnmount() {
   this.socket.disconnect();
 }
   onChange(editorState) {
+    console.log('E', editorState.getCurrentContent());
     this.setState({editorState: editorState});
     const raw = convertToRaw(this.state.editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
     console.log('STRINGRAW FROM CLIENT', stringRaw);
 
     this.socket.emit('liveEdit', stringRaw);
+
+    // onChange(editorState) {
+    //   console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
+    //   this.setState({editorState: editorState});
+    //   const raw = convertToRaw(this.state.editorState.getCurrentContent());
+    //   const stringRaw = JSON.stringify(raw);
+    //   this.state.socket.emit('liveEdit', stringRaw);
+    //   // console.log('STRINGRAW FROM CLIENT', stringRaw);
+    // }
   }
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
@@ -304,7 +314,7 @@ componentWillUnmount() {
           <div id="container">
               <Editor
                 style={styles.editor}
-                editorState={this.state.editorState} onChange={(editorState) => {this.onChange(editorState);}}
+                editorState={this.state.editorState} onChange={(e) => {this.onChange(e);}}
                 customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
