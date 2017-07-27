@@ -141,14 +141,36 @@ app.post('/createDoc', (req, res) => {
   });
 });
 
-// This route is for when we want to make a new doc
-app.post('/editor/new', (req, res) => {
-  // We need the  doc title, documentId and author
-  // var author = req.user.username;
-  // var documentId = req.body.docId;
-  // var docTitle = req.body.docTitle;
+app.post('/collaborate', (req, res) => {
+  var docId = req.body.docId;
+  var password = req.body.password;
 
-
+  Doc.findById(docId)
+  .then((doc) => {
+    if (doc.password === password) {
+      doc.collaborators.push(req.user._id)
+      doc.save((err) => {
+        if (err) {
+          res.json({failure: err})
+        } else {
+          User.findById(req.user._id)
+          .then((user) => {
+            user.docs.push({
+              id: docId,
+              isOwner: false
+            })
+            user.save((err) => {
+              if (err) {
+                res.json({failure: err})
+              } else {
+                res.json({success: true, doc: doc})
+              }
+            });
+          });
+        }
+      });
+    }
+  });
 });
 
 // This route is for when we want to open a saved document
