@@ -32,25 +32,28 @@ class DocumentsList extends React.Component {
       url: 'http://localhost:3000/docs'
     })
     .then((resp) => {
-      this.setState({documentIds: resp.data.user.docs});
+      if(resp.data.user.docs.length > 0 ) {
+        this.setState({documentIds: resp.data.user.docs});
+      }
     })
     .then((resp2) => {
       var myPromises = this.returnPromises();
-      Promise.all(myPromises).then((resp) => (this.setState({documents: resp})));
+      // CHECKING FOR AN EMPTY PROMISE ARRAY
+      if(myPromises.length > 0) {
+        Promise.all(myPromises).then((resp) => (this.setState({documents: resp})));
+      }
     })
     .catch(err => console.log("DocsList Fetch Error Response: ", err));
-
-    // this.setState({documents: Promise.all(docsObjPromiseArr)});
   }
 
   returnPromises() {
     return this.state.documentIds.map((doc) => {
       return axios({
-          method: 'post',
-          url: 'http://localhost:3000/editor/saved',
-          data: {
-            docId: doc.id
-          }
+        method: 'post',
+        url: 'http://localhost:3000/editor/saved',
+        data: {
+          docId: doc.id
+        }
       });
     });
   }

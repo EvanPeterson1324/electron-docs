@@ -37,10 +37,11 @@ class TextEditor extends React.Component {
       title: this.props.history.newDocTitle,
       author: this.props.history.username,
       docId: this.props.history.newDocId,
-      collaborators: null,
-      willRedirect: false,
       thisDoc: this.props.history.currentDoc,
-      socket: null
+      willRedirect: false,
+      collaborators: null,
+      socket: null,
+      socketId: null
     };
     this.onChange = this.onChange.bind(this);
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
@@ -53,7 +54,7 @@ class TextEditor extends React.Component {
         author: this.props.history.currentDoc.author,
         docId: this.props.history.currentDoc._id,
         collaborators: this.props.history.currentDoc.collaborators,
-      })
+      });
     }
     if (this.state.thisDoc && this.state.thisDoc.versions.length > 0) {
       var content = convertFromRaw(JSON.parse(this.state.thisDoc.versions[0].content));
@@ -62,12 +63,21 @@ class TextEditor extends React.Component {
       });
     }
     this.socket = io.connect('http://localhost:3000');
+    this.socket.emit('joinRoom', this.state.docId);
+
     this.setState({socket: this.socket});
+
     this.socket.on('broadcastEdit', stringRaw => {
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
+
+    // This makes the socket id aval to the client
+    this.socket.on('socketId', (socketId) => {
+      this.setState({socketId: socketId}, () => console.log("State after socketId ", this.state));
+    });
   }
+
   onChange(editorState) {
     console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
     this.setState({editorState: editorState});
@@ -298,11 +308,12 @@ class TextEditor extends React.Component {
           <div id="container">
               <Editor
                 style={styles.editor}
-                editorState={this.state.editorState} onChange={(event) => {this.onChange(event);}}
-                customStyleMap={styleMap} blockStyleFn={this.blockStyleFn}
+                editorState={this.state.editorState}
+                onChange={(event) => {this.onChange(event);}}
+                customStyleMap={styleMap}
+                blockStyleFn={this.blockStyleFn}
                 blockRenderMap={extendedBlockRenderMap}
               />
-          <script type="text/javascript"> var socket = io('localhost: 3000') socket.emit('newEvent')</script>
           </div>
         </div>
 

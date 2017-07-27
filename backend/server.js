@@ -42,13 +42,30 @@ app.use(passport.session());
 
 // SOCKET HANDLER ------------------------------------------------------------
 io.on('connection', socket => {
-  socket.on('newEvent', function() {
+
+  // Enter new doc
+  socket.on('joinRoom', (docId) => {
+    console.log("Socket Id in 'join room server'", socket);
+    socket.roomId = docId;
+    socket.join(docId);
   });
 
+  // Leave doc
+  socket.on('leaveRoom', () => {
+    if(socket.roomId) {
+      socket.leave(socket.roomId);
+    }
+  });
+
+
+  // Editing in doc
   socket.on('liveEdit', stringRaw => {
     console.log('SERVER GOT THIS STRING', stringRaw);
-    socket.broadcast.emit('broadcastEdit', stringRaw);
+    io.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
+
+  socket.emit('socketId', socket.id);
+
 });
 
 
@@ -115,6 +132,7 @@ app.post('/createDoc', (req, res) => {
       res.json({failure: err});
     }
 
+    // THIS MAY CAUSE SOMETHING TO BREAK IF WE DELETE SOMETHING FROM THE DATABASE!!!!!
     User.findOne({username: req.user.username})
     .then((user) => {
       user.docs.push({id: doc._id, isOwner: true});
@@ -131,15 +149,6 @@ app.post('/createDoc', (req, res) => {
   });
 });
 
-// This route is for when we want to make a new doc
-app.post('/editor/new', (req, res) => {
-  // We need the  doc title, documentId and author
-  // var author = req.user.username;
-  // var documentId = req.body.docId;
-  // var docTitle = req.body.docTitle;
-
-
-});
 
 // This route is for when we want to open a saved document
 app.post('/editor/saved', (req, res) => {
@@ -160,9 +169,9 @@ app.post('/editor/saved', (req, res) => {
 });
 
 app.post('/save', (req, res) => {
-  console.log('THIS IS ME SAVING', docId, version);
   var docId = req.body.docId;
   var version = req.body.version;
+
   Doc.findById(docId)
   .then((doc) => {
     doc.versions.unshift(version);
