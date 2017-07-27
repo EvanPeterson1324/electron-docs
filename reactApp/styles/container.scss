@@ -35,6 +35,15 @@
   margin-top: 20px;
   width: 100%;
 }
+.alignRowMargin {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  margin-left: 35px;
+}
 .spacer50 {
   height: 50px;
   width: 100%;
@@ -55,11 +64,26 @@
   align-items: center;
 }
 
+.alignLeft {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  padding-left: 100px;
+}
+
+.spacerW {
+  width: 5px;
+}
 .spacer {
   width: 100%;
   height: 30px;
 }
 
+.spacer100 {
+  width: 100%;
+  height: 100px
+}
 .card {
   width: 400px;
   height: 500px;
@@ -76,19 +100,22 @@
   overflow: scroll;
 }
 .h1NoMargin {
-  font-family: 'Alegreya';
+  font-family: 'Avenir Next';
   font-size: 30px;
   color: #4f4f4f;
-  margin: 0 !important
+  margin: 0 !important;
+  font-weight: 400;
 }
 h1 {
-  font-family: 'Alegreya';
+  font-family: 'Avenir Next';
   font-size: 30px;
   color: #4f4f4f;
-  margin-left: 30px;
+  font-weight:600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
 }
 h2 {
-  font-family: 'Alegreya';
+  font-family: 'Avenir Next';
   font-size: 20px;
   color: #4f4f4f;
   margin-left: 30px;
@@ -97,7 +124,7 @@ p {
   font-family: 'Lato';
   font-size: 15px;
   color: #4f4f4f;
-  margin-left: 25px;
+  margin-left: 30px;
 }
 a {
   font-family: 'Lato';

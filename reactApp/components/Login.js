@@ -66,26 +66,36 @@ class Login extends React.Component {
     }
 
     return(
-      <div>
+      <div className="alignLeft">
         <form onSubmit={this.makeLoginRequest}>
-          <h1>Login</h1>
-          <p>Username</p>
-          <input
-            type="text"
-            placeholder="Username"
-            value={this.state.username}
-            onChange={this.handleUsernameChange}></input>
-          <p>Password</p>
-          <input
-            type="password"
-            placeholder="Password"
-            value={this.state.password}
-            onChange={this.handlePasswordChange}></input> <br></br>
-          <input
-            type="submit"
-            ></input>
+          <div className="spacer100"></div>
+          <h1 className="h1NoMargin">Login</h1>
+          <hr style={styles.hrLogin}></hr>
+          <div className="alignRow">
+            <span className="icon"><i className="fa fa-user-o" aria-hidden="true"></i></span>
+            <input
+              type="text"
+              style={styles.inputBox}
+              placeholder="Username"
+              value={this.state.username}
+              onChange={this.handleUsernameChange}></input>
+          </div>
+          <div className="spacer10"></div>
+          <div className="alignRow">
+            <div className="spacerW"></div>
+            <span className="icon"><i className="fa fa-lock" aria-hidden="true"></i></span>
+            <input
+              type="password"
+              style={styles.inputBox}
+              placeholder="Password"
+              value={this.state.password}
+              onChange={this.handlePasswordChange}></input> <br></br>
+          </div>
+          <div className="alignRowMargin">
+            <Link to="/register" style={styles.buttonMedNoMarginO}>Register</Link>
+            <input type="submit" style={styles.buttonMedNoMarginG}></input>
+          </div>
         </form>
-        <Link to="/register">Register</Link>
       </div>
     );
   }

@@ -24,16 +24,18 @@ const styles = {
     textDecoration: 'line-through'
   },
   title: {
-    fontFamily: 'Alegreya',
     fontSize: '30px',
     color: '#4f4f4f',
-    marginLeft: '30px'
+    marginLeft: '30px',
+    textTransform: 'none',
+    letterSpacing: '0'
   },
   h2: {
-    fontFamily: 'Alegreya',
     fontSize: '20px',
     color: '#4f4f4f',
-    marginLeft: '30px'
+    marginLeft: '30px',
+    textTransform: 'none',
+    letterSpacing: '0'
   },
   p: {
     fontFamily: 'Lato',
@@ -314,6 +316,19 @@ const styles = {
     borderRadius: '2px',
     borderColor: '#b2b2b2'
   },
+  inputBoxMargin: {
+    fontFamily: 'Lato',
+    fontSize: '14px',
+    paddingLeft: '10px',
+    paddingRight: '10px',
+    height: '28px',
+    width: '200px',
+    border: 'solid',
+    borderWidth: '1px',
+    borderRadius: '2px',
+    borderColor: '#b2b2b2',
+    marginLeft: '15px'
+  },
   buttonLongY: {
     position: 'relative',
     margin: '5px',
@@ -393,6 +408,13 @@ const styles = {
     border: '0',
     borderBottom: '1px solid #F9A825',
     boxShadow: 'inset 0 -2px #F9A825',
+  },
+  hrLogin: {
+    marginLeft: '5px',
+    width: '300px',
+    borderColor: '#c6c6c6',
+    borderStyle: 'solid',
+    borderWidth: '1px'
   }
 };
 

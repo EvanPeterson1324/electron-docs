@@ -74,11 +74,9 @@ componentWillUnmount() {
   this.socket.disconnect();
 }
   onChange(editorState) {
-    console.log('E', editorState.getCurrentContent());
     this.setState({editorState: editorState});
     const raw = convertToRaw(editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
-    console.log('STRINGRAW FROM CLIENT', stringRaw);
     this.socket.emit('liveEdit', stringRaw);
   }
   blockStyleFn(contentBlock) {

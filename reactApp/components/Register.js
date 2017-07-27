@@ -51,10 +51,11 @@ class Register extends React.Component {
       );
     }
     return(
-      <div className="alignCenter">
-        <div className="spacer50"></div>
+      <div className="alignLeft">
         <form onSubmit={this.makeRegisterRequest}>
+          <div className="spacer100"></div>
           <h1 className="h1NoMargin">Register</h1>
+          <hr style={styles.hrLogin}></hr>
           <div className="alignRow">
             <span className="icon"><i className="fa fa-user-o" aria-hidden="true"></i></span>
             <input
@@ -65,25 +66,34 @@ class Register extends React.Component {
               onChange={this.handleUsernameChange}>
             </input>
           </div>
-            <p>Password</p>
+          <div className="spacer10"></div>
+          <div className="alignRow">
+            <div className="spacerW"></div>
+            <span className="icon"><i className="fa fa-lock" aria-hidden="true"></i></span>
             <input
               type="password"
+              style={styles.inputBox}
               placeholder="Password"
               value={this.state.password}
               onChange={this.handlePasswordChange}>
             </input> <br></br>
-            <p> Confirm Password </p>
+          </div>
+          <div className="alignRow">
+            <div className="spacerW"></div>
+            <span className="icon"><i className="fa fa-lock" aria-hidden="true"></i></span>
             <input
                 type="password"
+                style={styles.inputBox}
                 placeholder="Confirm Password"
                 value={this.state.confirmPassword}
                 onChange={this.handleConfirmPwChange}>
             </input> <br></br>
-            <input
-                type="submit">
-            </input>
+          </div>
+          <div className="alignRowMargin">
+            <Link style={styles.buttonMedNoMarginO}to="/login">Login</Link>
+            <input type="submit" style={styles.buttonMedNoMarginG}></input>
+          </div>
         </form>
-        <Link to="/login">Login</Link>
       </div>
     );
   }
