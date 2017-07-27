@@ -2,7 +2,8 @@ import React from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { Redirect } from 'react-router';
-
+import styles from '../styles/styles';
+import '../styles/container.scss';
 /**
  * This component allows the user to attempt to login to our app,
  * and if successful, will be brought to the list of documents they have saved.

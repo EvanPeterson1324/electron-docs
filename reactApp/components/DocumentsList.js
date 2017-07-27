@@ -21,9 +21,9 @@ class DocumentsList extends React.Component {
     };
 
     this.createDoc = this.createDoc.bind(this);
-    this.attemptColaboration = this.attemptColaboration.bind(this);
+    this.attemptCollaboration = this.attemptCollaboration.bind(this);
     this.generateDocumentList = this.generateDocumentList.bind(this);
-    this.generateColaborationList = this.generateColaborationList.bind(this);
+    this.generateCollaborationList = this.generateCollaborationList.bind(this);
     this.returnPromises = this.returnPromises.bind(this);
     this.openDocumentClick = this.openDocumentClick.bind(this);
   }
@@ -78,7 +78,7 @@ class DocumentsList extends React.Component {
     });
   };
 
-  attemptColaboration() {
+  attemptCollaboration() {
     axios({
       method: 'post',
       url: 'http://localhost:3000/collaborate',
@@ -90,6 +90,7 @@ class DocumentsList extends React.Component {
     .then((resp) => {
       console.log('COLLABORATE RESP', resp);
       if (resp.data.success) {
+        this.props.history.newDocId = this.state.collabDocId;
         this.props.history.currentDoc = resp.data.doc;
         this.setState({willRedirect: true})
       }
@@ -115,7 +116,7 @@ class DocumentsList extends React.Component {
     };
   };
 
-  generateColaborationList() {
+  generateCollaborationList() {
     if (this.state.documents.length > 0) {
       return this.state.documents.map((doc) => {
         var singleDoc = doc.data.doc;
@@ -205,7 +206,7 @@ class DocumentsList extends React.Component {
             </input>
             <button
               style={styles.buttonLongY}
-              onClick={() => {this.attemptColaboration();}}>
+              onClick={() => {this.attemptCollaboration();}}>
               <span><i className="fa fa-users" aria-hidden="true"></i> Collaborate</span>
             </button>
           </div>
@@ -220,7 +221,7 @@ class DocumentsList extends React.Component {
             <div className="card2">
               <h1 style={styles.h2}>My Collaborations</h1>
               <hr style={styles.hr}></hr>
-              <ul> {this.generateColaborationList()} </ul>
+              <ul> {this.generateCollaborationList()} </ul>
             </div>
           </div>
         </div>

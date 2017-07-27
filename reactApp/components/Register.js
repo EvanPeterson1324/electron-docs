@@ -62,22 +62,26 @@ class Register extends React.Component {
               type="text"
               placeholder="Username"
               value={this.state.username}
-              onChange={this.handleUsernameChange}></input>
+              onChange={this.handleUsernameChange}>
+            </input>
           </div>
             <p>Password</p>
             <input
               type="password"
               placeholder="Password"
               value={this.state.password}
-              onChange={this.handlePasswordChange}></input> <br></br>
-              <p> Confirm Password </p>
-              <input
+              onChange={this.handlePasswordChange}>
+            </input> <br></br>
+            <p> Confirm Password </p>
+            <input
                 type="password"
                 placeholder="Confirm Password"
                 value={this.state.confirmPassword}
-                onChange={this.handleConfirmPwChange}></input> <br></br>
-                <input
-                  type="submit"></input>
+                onChange={this.handleConfirmPwChange}>
+            </input> <br></br>
+            <input
+                type="submit">
+            </input>
         </form>
         <Link to="/login">Login</Link>
       </div>
