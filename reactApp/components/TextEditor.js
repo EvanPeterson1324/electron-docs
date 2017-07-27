@@ -53,22 +53,15 @@ class TextEditor extends React.Component {
         author: this.props.history.currentDoc.author,
         docId: this.props.history.currentDoc._id,
         collaborators: this.props.history.currentDoc.collaborators,
-        thisDoc: this.props.history.currentDoc
       })
     }
-    console.log('THISDOCTHO', this.state.thisDoc);
-    if (this.props.history.currentDoc && this.props.history.currentDoc.versions.length > 0) {
-      var content = convertFromRaw(JSON.parse(this.props.history.currentDoc.versions[0].content));
+    if (this.state.thisDoc && this.state.thisDoc.versions.length > 0) {
+      var content = convertFromRaw(JSON.parse(this.state.thisDoc.versions[0].content));
       this.setState({
         editorState: EditorState.createWithContent(content),
       });
-    } else {
-      this.setState({
-        editorState: EditorState.createEmpty()
-      })
     }
     this.socket = io.connect('http://localhost:3000');
-    this.socket.emit('joinRoom', this.state.docId);
     this.setState({socket: this.socket});
     this.socket.on('broadcastEdit', stringRaw => {
       const content = convertFromRaw(JSON.parse(stringRaw));
@@ -76,11 +69,12 @@ class TextEditor extends React.Component {
     });
   }
   onChange(editorState) {
-    console.log("THIS IS THE STATE", this.state);
+    console.log("THIS IS THE STATE", this.state.editorState.getCurrentContent());
     this.setState({editorState: editorState});
-    const raw = convertToRaw(editorState.getCurrentContent());
+    const raw = convertToRaw(this.state.editorState.getCurrentContent());
     const stringRaw = JSON.stringify(raw);
     this.state.socket.emit('liveEdit', stringRaw);
+    // console.log('STRINGRAW FROM CLIENT', stringRaw);
   }
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
