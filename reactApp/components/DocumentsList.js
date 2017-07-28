@@ -72,7 +72,7 @@ class DocumentsList extends React.Component {
       if(resp.data.success) {
         this.props.history.newDocId = resp.data.docId;
         this.props.history.newDocTitle = resp.data.title;
-
+        this.props.history.push('/textEditor', JSON.stringify({newDocId: resp.data.docId, newDocTitle: resp.data.title}));
         this.setState({
           willRedirect: true,
         });
@@ -150,6 +150,7 @@ class DocumentsList extends React.Component {
       console.log('THESE ARE MY DOCS', this.state.documents);
       return(
         <div className="alignLeft50">
+          <div className="spacer"></div>
           <h1 style={styles.title}>👋🏼  Hey {this.props.history.username}!</h1>
           <div className="alignRow">
             <NewDocModal createDoc={this.createDoc} history={this.props.history}/>

@@ -16,17 +16,17 @@ const styleMap ={
   'FONT_BLUE': styles.fontBlue,
   'FONT_GRAY': styles.fontGray,
   'BACKGROUND_COLOUR': styles.backgroundRed,
-  '#FFA500':  styles.highlight_FFA500,
-  '#6897bb': styles.highlight_6897bb,
-  '#343417': styles.highlight_343417,
-  '#3b5998': styles.highlight_3b5998,
-  '#ffd700': styles.highlight_ffd700,
+  '#F06292':  styles.highlight_FFA500,
+  '#9575CD': styles.highlight_6897bb,
+  '#64B5F6': styles.highlight_343417,
+  '#81C784': styles.highlight_3b5998,
+  '#4DD0E1': styles.highlight_ffd700,
   '#ffc873': styles.highlight_ffc873
 };
 
 const blockRenderMap = Map({
   'alignLeft': {
-    element: 'alignLeft'
+    element: 'align-Left'
   },
   'alignRight': {
     element: 'alignRight'
@@ -59,6 +59,7 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount(){
+    console.log('PROPS', this.props);
     if (this.props.history.currentDoc) {
       this.setState({
         title: this.props.history.currentDoc.title,
@@ -73,21 +74,19 @@ class TextEditor extends React.Component {
         editorState: EditorState.createWithContent(content),
       });
     }
+  };
+  componentWillMount() {
     this.socket.on('broadcastEdit', stringRaw => {
-      console.log("GOT IT BACK FROM THE SERVER! TIME TO RENDER!", stringRaw);
       const content = convertFromRaw(JSON.parse(stringRaw));
       this.setState({editorState: EditorState.createWithContent(content)});
     });
 
     this.socket.on('socketId', (socketId) =>{
-
       this.setState({socketId: socketId});
-      console.log('this is the state after socket id is returned', this.state);
     });
 
     this.socket.on('socketColor', socketColor => {
       this.setState({socketColor: socketColor});
-      console.log('THE SOCKET COLOR HAS BEEN SET BY CLIENT to', this.state.socketColor);
     });
 
     this.socket.on('receiveNewCursor', incomingSelectionObj => {
@@ -109,7 +108,8 @@ class TextEditor extends React.Component {
         this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
       });
     });
-  };
+
+  }
 
   componentWillUnmount() {
     this.props.history.currentDoc = null;
@@ -122,10 +122,14 @@ class TextEditor extends React.Component {
     }
     return this.state.thisDoc.versions.map((currentVersion) => {
       return (
+        <div>
         <button
+          style={styles.btnRevHistory}
           onClick={() => {this.loadDiffVersion(currentVersion, closeModalFunc);}}>
           <li>{moment(currentVersion.timeStamp).format('MMMM Do YYYY, h:mm:ss a')}</li>
         </button>
+        <br></br>
+        </div>
       );
     });
   };
@@ -172,7 +176,7 @@ class TextEditor extends React.Component {
   blockStyleFn(contentBlock) {
     const type = contentBlock.getType();
     if (type === 'alignLeft') {
-      return 'alignLeft';
+      return 'align-Left';
     }
     if (type === 'alignRight') {
       return 'alignRight';
@@ -332,7 +336,10 @@ class TextEditor extends React.Component {
               <span><i className="fa fa-floppy-o" aria-hidden="true"></i> Save</span>
             </button>
           </div>
-          <h1 style={styles.title}>🗒️  {this.state.title}</h1>
+          <div className="alignRow">
+            <div className="spacerW20"></div>
+            <h1 style={styles.title}>🗒️  {this.state.title}</h1>
+          </div>
           <h3 style={styles.h3}><b>By: {this.state.author}</b></h3>
           <h3 style={styles.h3}>Share this document ID with your collaborators: <b>{this.state.docId}</b></h3>
           <div style={styles.allButTitle}>
@@ -349,9 +356,6 @@ class TextEditor extends React.Component {
               <button style={styles.buttonflatGR} onClick={() => this.h1()}>H1</button>
               <button style={styles.buttonflatGR} onClick={() => this.h2()}>H2</button>
               <button style={styles.buttonflatGR} onClick={() => this.h3()}>H3</button>
-              <button style={styles.buttonflat} onClick={() => this.makeItalic()}>
-                <i className="fa fa-italic" aria-hidden="true"></i>
-              </button>
               <button style={styles.buttonflat} onClick={() => this.makeBold()}>
                 <i className="fa fa-bold" aria-hidden="true"></i>
               </button>
@@ -398,6 +402,7 @@ class TextEditor extends React.Component {
             />
           </div>
         </div>
+        <p>For a second page, Venmo Jatharsan $99/month</p>
       </div>
     );
   }

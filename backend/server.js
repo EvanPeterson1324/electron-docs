@@ -11,7 +11,7 @@ const Doc = require('./models/models').Doc;
 const server = require('http').createServer(app);
 const io = require('socket.io')(server); //io wants the server version with http
 let usedColors = [];
-let colorPicker = ['#FFA500','#6897bb','#343417','#3b5998','#ffd700','#ffc873']
+let colorPicker = ['#F06292','#9575CD','#64B5F6','#81C784','#4DD0E1','#ffc873']
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -69,7 +69,6 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   });
 
   socket.on('cursorMove', selection => {
-    console.log('selection', selection);
     socket.broadcast.to(socket.theOneRoom).emit('receiveNewCursor', selection);
   });
 
@@ -82,7 +81,6 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   })
 });
 // END SOCKET HANDLER --------------------------------------------------------
-
 app.get('/', (req, res) => {
   res.send('Hit the / route!');
 });
@@ -210,7 +208,6 @@ app.post('/editor/saved', (req, res) => {
 });
 
 app.post('/save', (req, res) => {
-  console.log('THIS IS ME SAVING', docId, version);
   var docId = req.body.docId;
   var version = req.body.version;
   Doc.findById(docId)
@@ -248,10 +245,8 @@ const saveUserInMongoDB = (username, password) => {
   new User({username, password})
   .save((err) => {
     if(err) {
-      console.log("Error creating new user: ", err);
       return false;
     }
-    console.log("User created!");
     return true;
   });
 };

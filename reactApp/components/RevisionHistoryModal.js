@@ -1,6 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import styles from '../styles/styles';
+import '../styles/container.scss';
 
 const customStyles = {
   content : {
@@ -12,7 +13,7 @@ const customStyles = {
     transform             : 'translate(-50%, -50%)',
     backgroundColor       : '#f4f5f7',
     borderStyle           : 'none',
-    width                 : '400px',
+    width                 : '350px',
     padding               : '30px',
     boxShadow             : '0 2px 8px rgba(0, 0, 0, 0.1)'
   }
@@ -47,7 +48,7 @@ class RevisionHistoryModal extends React.Component {
   getVersionList() {
     const revisionsList = this.props.generateRevisionsList;
     if(!this.state.modelIsOpen) {
-      return <ul>{revisionsList(this.closeModal)}</ul>;
+      return <ul style={styles.a}>{revisionsList(this.closeModal)}</ul>;
     }
     return <p>"Model not open"</p>;
   }

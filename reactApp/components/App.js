@@ -12,11 +12,6 @@ class App extends React.Component {
     return (
         <div>
             <Redirect to="/login"/>
-            {/* <Route
-              exact={true}
-              path="/"
-              component={Login}
-            /> */}
 
             <Route
               exact={true}

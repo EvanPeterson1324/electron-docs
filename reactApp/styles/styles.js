@@ -370,6 +370,24 @@ const styles = {
     borderBottom: '1px solid #AD1457',
     boxShadow: 'inset 0 -2px #AD1457',
   },
+  btnRevHistory: {
+    position: 'relative',
+    textDecoration: 'none',
+    margin: '5px',
+    verticalAlign: 'top',
+    width: '250px',
+    height: '30px',
+    borderRadius: '3px',
+    padding: '2px',
+    fontSize: '18px',
+    color: 'white',
+    textAlign: 'center',
+    textShadow: '0 1px 2px rgba(0, 0, 0, 0.25)',
+    background: '#D81B60',
+    border: '0',
+    borderBottom: '1px solid #AD1457',
+    boxShadow: 'inset 0 -2px #AD1457',
+  },
   buttonMedNoMarginG: {
     position: 'relative',
     margin: '10px',
@@ -435,19 +453,19 @@ const styles = {
     borderWidth: '1px'
   },
   highlight_FFA500: {
-    backgroundColor: '#FFA500'
+    backgroundColor: '#F06292'
   },
   highlight_6897bb: {
-    backgroundColor: '#6897bb'
+    backgroundColor: '#9575CD'
   },
   highlight_343417: {
-    backgroundColor: '#343417'
+    backgroundColor: '#64B5F6'
   },
   highlight_3b5998: {
-    backgroundColor: '#3b5998'
+    backgroundColor: '#81C784'
   },
   highlight_ffd700: {
-    backgroundColor: '#ffd700'
+    backgroundColor: '#4DD0E1'
   },
   highlight_ffc873: {
     backgroundColor: '#ffc873'

@@ -56,7 +56,10 @@
   margin-top: 20px;
   width: 100%;
 }
-
+.spacerW20 {
+  width: 35px;
+  height: 1px;
+}
 .alignCenter {
   display: flex;
   flex-direction: column;
@@ -145,7 +148,18 @@ a {
   padding: 0 !important;
   margin: 0 !important;
 }
-
+ul {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  padding-left: 0 !important;
+  margin-left: 25px;
+  // justify-content: center;
+  // align-items: center;
+}
+li {
+  text-decoration: none;
+}
 .icon {
   font-size: 25px;
   color: #b2b2b2;
