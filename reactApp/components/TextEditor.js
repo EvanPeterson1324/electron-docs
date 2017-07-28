@@ -140,13 +140,6 @@ class TextEditor extends React.Component {
     this.setState({ editorState: EditorState.createWithContent(content) });
     closeModalFunc();
   }
-
-  // onChange(editorState) {
-  //   this.setState({editorState: editorState});
-  //   const raw = convertToRaw(editorState.getCurrentContent());
-  //   const stringRaw = JSON.stringify(raw);
-  //   this.socket.emit('liveEdit', stringRaw);
-  // }
   onChange(editorState) {
     const selection = editorState.getSelection();
 
@@ -167,7 +160,7 @@ class TextEditor extends React.Component {
 
     const raw = convertToRaw(contentState);
     const stringRaw = JSON.stringify(raw);
-    console.log('STRINGRAW FROM CLIENT', stringRaw);
+
     this.socket.emit('liveEdit', stringRaw);
 
     this.setState({editorState: editorState});

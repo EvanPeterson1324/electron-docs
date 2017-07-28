@@ -107,13 +107,15 @@ class DocumentsList extends React.Component {
             <Link
               to="/textEditor"
               onClick={() => {this.openDocumentClick(singleDoc);}}>
-              <p style={styles.p}>{singleDoc.title}</p>
+              <h1 style={styles.p}>{singleDoc.title}</h1>
             </Link>
           );
         }
       });
     } else {
-      return <p>You have no docs :(</p>
+      return (
+        <p>Boo you have no docs 😓</p>
+      )
     };
   };
 
@@ -128,13 +130,15 @@ class DocumentsList extends React.Component {
             <Link
               to="/textEditor"
               onClick={() => {this.openDocumentClick(singleDoc);}}>
-              <p style={styles.p}>{singleDoc.title}</p>
+              <h1 style={styles.p}>{singleDoc.title}</h1>
             </Link>
           );
         }
       });
     } else {
-      return <p>You have no docs :(</p>
+      return (
+        <p>Boo you have no docs 😓</p>
+      )
     };
   };
 
@@ -150,7 +154,7 @@ class DocumentsList extends React.Component {
       console.log('THESE ARE MY DOCS', this.state.documents);
       return(
         <div className="alignLeft50">
-          <div className="spacer"></div>
+          <div className="spacer65"></div>
           <h1 style={styles.title}>👋🏼  Hey {this.props.history.username}!</h1>
           <div className="alignRow">
             <NewDocModal createDoc={this.createDoc} history={this.props.history}/>

@@ -62,7 +62,7 @@ class CollaborateDocModal extends React.Component {
     })
     .then((resp) => {
       if (resp.data.success) {
-        this.props.history.newDocId = this.state.collabDocId;
+        this.props.history.newDocId = this.state.collabId;
         this.props.history.currentDoc = resp.data.doc;
         this.setState({willRedirect: true})
         this.closeModal();
@@ -87,7 +87,7 @@ class CollaborateDocModal extends React.Component {
           contentLabel="Become a new collaborator!"
           >
 
-            <h2 ref={subtitle => this.subtitle = subtitle}>Enter the collab id and password</h2>
+            <h2 ref={subtitle => this.subtitle = subtitle}>Enter the collab ID and password</h2>
             <div>
               <form onSubmit={this.handleSubmit}>
                 <input
