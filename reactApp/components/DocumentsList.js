@@ -35,7 +35,7 @@ class DocumentsList extends React.Component {
 
     axios({
       method: 'get',
-      url: 'http://localhost:3000/docs'
+      url: 'https://dry-shelf-34995.herokuapp.com//docs'
     })
     .then((resp) => {
       this.setState({user: resp.data.user, documentIds: resp.data.user.docs});
@@ -51,7 +51,7 @@ class DocumentsList extends React.Component {
     return this.state.documentIds.map((doc) => {
       return axios({
         method: 'post',
-        url: 'http://localhost:3000/editor/saved',
+        url: 'https://dry-shelf-34995.herokuapp.com//editor/saved',
         data: {
           docId: doc.id
         }
@@ -62,7 +62,7 @@ class DocumentsList extends React.Component {
   createDoc() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/createDoc',
+      url: 'https://dry-shelf-34995.herokuapp.com//createDoc',
       data: {
         title: this.state.newDocName,
         password: this.state.newDocPassword
@@ -83,7 +83,7 @@ class DocumentsList extends React.Component {
   attemptCollaboration() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/collaborate',
+      url: 'https://dry-shelf-34995.herokuapp.com//collaborate',
       data: {
         docId: this.state.collabDocId,
         password: this.state.collabDocPassword

@@ -54,7 +54,7 @@ class CollaborateDocModal extends React.Component {
   handleSubmit() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/collaborate',
+      url: 'https://dry-shelf-34995.herokuapp.com//collaborate',
       data: {
         docId: this.state.collabId,
         password: this.state.docPassword

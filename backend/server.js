@@ -239,7 +239,7 @@ app.use((req, res, next) => {
 });
 // ---------------------------------------------------------------------------
 
-server.listen(3000, () => {
+server.listen(process.env.PORT || 3000, () => {
   console.log('Backend server for Electron Docs App running on port 3000!');
 });
 

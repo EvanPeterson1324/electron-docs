@@ -52,7 +52,7 @@ class AddNewDocModal extends React.Component {
   handleSubmit() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/createDoc',
+      url: 'https://dry-shelf-34995.herokuapp.com//createDoc',
       data: {
         title: this.state.docName,
         password: this.state.docPassword

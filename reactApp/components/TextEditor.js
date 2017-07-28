@@ -54,7 +54,7 @@ class TextEditor extends React.Component {
     this.handleSaveDocument = this.handleSaveDocument.bind(this);
     this.generateRevisionsList = this.generateRevisionsList.bind(this);
 
-    this.socket = io('http://localhost:3000');
+    this.socket = io('https://dry-shelf-34995.herokuapp.com/');
     this.socket.emit('joinRoom', this.state.docId)
   }
 
@@ -294,7 +294,7 @@ class TextEditor extends React.Component {
     // docId ---> this.state.docId
     axios({
       method: 'post',
-      url: 'http://localhost:3000/save',
+      url: 'https://dry-shelf-34995.herokuapp.com//save',
       data: {
         version: currVersion,
         docId: this.state.docId

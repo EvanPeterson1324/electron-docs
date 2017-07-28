@@ -37,7 +37,7 @@ class Login extends React.Component {
   makeLoginRequest() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/login',
+      url: 'https://dry-shelf-34995.herokuapp.com//login',
       data: {
         username: this.state.username,
         password: this.state.password,

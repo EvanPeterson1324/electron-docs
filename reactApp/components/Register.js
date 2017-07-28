@@ -98,7 +98,7 @@ componentWillMount() {
   makeRegisterRequest() {
     axios({
       method: 'post',
-      url: 'http://localhost:3000/register',
+      url: 'https://dry-shelf-34995.herokuapp.com//register',
       data: {
         username: this.state.username,
         password: this.state.password,
@@ -131,7 +131,7 @@ componentWillMount() {
     this.setState({isUsernameFldDisabled: true});
     axios({
       method: 'post',
-      url: 'http://localhost:3000/findUser',
+      url: 'https://dry-shelf-34995.herokuapp.com//findUser',
       data: {
         username: this.state.username,
       }
