@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, Redirect } from 'react-router-dom';
 import styles from '../styles/styles';
 import '../styles/container.scss';
+let timeoutId;
 
 class Register extends React.Component {
   constructor(props) {
@@ -11,7 +12,9 @@ class Register extends React.Component {
       username: '',
       password: '',
       confirmPassword: '',
-      isSubmitDisabled: true ,
+      arePwFieldsDisabled: true,
+      isUsernameFldDisabled: false,
+      isSubmitDisabled: true,
       willRedirect: false
     };
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
@@ -19,11 +22,37 @@ class Register extends React.Component {
     this.handleConfirmPwChange = this.handleConfirmPwChange.bind(this);
     this.makeRegisterRequest = this.makeRegisterRequest.bind(this);
     this.checkFormsValid = this.checkFormsValid.bind(this);
+    this.checkPwFieldsCanBeEnabled = this.checkPwFieldsCanBeEnabled.bind(this);
   }
 
-  handleUsernameChange(event) { this.setState({ username: event.target.value }); }
-  handlePasswordChange(event) { this.setState({ password: event.target.value }); }
-  handleConfirmPwChange(event) { this.setState({ confirmPassword: event.target.value }); }
+  handleUsernameChange(event) {
+    if(timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+
+    this.setState({
+      username: event.target.value,
+      arePwFieldsDisabled: true
+    });
+    console.log("Username and pw fields disabled!");
+    if(this.state.username.length >= 5) {
+      console.log("timer set!");
+      timeoutId = setTimeout(this.checkPwFieldsCanBeEnabled, 1000);
+    }
+  }
+
+  handlePasswordChange(event) {
+    this.setState({ password: event.target.value }, () => {
+      this.checkFormsValid();
+    });
+  }
+  handleConfirmPwChange(event) {
+    this.setState({ confirmPassword: event.target.value }, () => {
+      this.checkFormsValid();
+
+    });
+  }
 
   makeRegisterRequest() {
     axios({
@@ -44,25 +73,46 @@ class Register extends React.Component {
 
   // this function will be called on every input change and check if the info
   // entered is valid in real time
-  // checkFormsValid() {
-  //   const FIVE_CHARACTERS = 5;
-  //   const EIGHT_CHARACTERS = 8;
-  //   if(this.state.username.length < FIVE_CHARACTERS
-  //     || this.state.password !== this.state.confirmPassword
-  //     || this.state.password.length < EIGHT_CHARACTERS
-  //     || this.state.confirmPassword.length < EIGHT_CHARACTERS
-  //   ) {
-  //     this.setState({ isSubmitDisabled: true });
-  //     return true;
-  //   }
-  //
-  //   // if the forms are all good, lets set the state of the isValidForm and enable
-  //   // the submit button
-  //   this.setState({
-  //     isSubmitDisabled: false
-  //   });
-  //   return false;
-  // }
+  checkFormsValid() {
+    console.log("Checking if pws match....");
+    const SEVEN_CHARACTERS = 7;
+    if(this.state.password.length >= SEVEN_CHARACTERS &&
+         this.state.password === this.state.confirmPassword
+    ) {
+      console.log("You can submit now!");
+      this.setState({ isSubmitDisabled: false });
+      return false;
+    }
+    // if the forms are all good, lets set the state of the isValidForm and enable
+    // the submit button
+    this.setState({
+      isSubmitDisabled: true
+    });
+    return true;
+  }
+
+  checkPwFieldsCanBeEnabled() {
+    console.log("INSIDE CHECKING PW FIELDS!");
+    this.setState({isUsernameFldDisabled: true});
+    axios({
+      method: 'post',
+      url: 'http://localhost:3000/findUser',
+      data: {
+        username: this.state.username,
+      }
+    })
+      .then((resp) => {
+        this.setState({isUsernameFldDisabled: false});
+        if(resp.data.username) {
+          this.setState({arePwFieldsDisabled: true});
+          return false;
+        }
+        console.log("password Fields enabled!");
+        this.setState({arePwFieldsDisabled: false});
+        return true;
+      })
+      .catch(err => console.log("Error in database call in checkPwFieldsCanBeEnabled: ", err));
+  }
 
   render() {
     if(this.state.willRedirect) {
@@ -87,7 +137,8 @@ class Register extends React.Component {
               type="text"
               placeholder="Username"
               value={this.state.username}
-              onChange={this.handleUsernameChange}>
+              onChange={this.handleUsernameChange}
+              disabled={this.state.isUsernameFldDisabled}>
             </input>
           </div>
           <div className="spacer10"></div>
@@ -99,7 +150,8 @@ class Register extends React.Component {
               style={styles.inputBox}
               placeholder="Password"
               value={this.state.password}
-              onChange={this.handlePasswordChange}>
+              onChange={this.handlePasswordChange}
+              disabled={this.state.arePwFieldsDisabled}>
             </input> <br></br>
           </div>
           <div className="alignRow">
@@ -110,7 +162,8 @@ class Register extends React.Component {
                 style={styles.inputBox}
                 placeholder="Confirm Password"
                 value={this.state.confirmPassword}
-                onChange={this.handleConfirmPwChange}>
+                onChange={this.handleConfirmPwChange}
+                disabled={this.state.arePwFieldsDisabled}>
             </input> <br></br>
           </div>
           <div className="alignRowMargin">
@@ -118,7 +171,7 @@ class Register extends React.Component {
             <input
               type="submit"
               style={styles.buttonMedNoMarginG}
-              disabled={this.state.isValidForm}>
+              disabled={this.state.isSubmitDisabled}>
               </input>
           </div>
         </form>
