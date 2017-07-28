@@ -69,7 +69,7 @@ class AddNewDocModal extends React.Component {
         this.closeModal();
       }
     });
-  };
+  }
 
   render() {
     if (this.state.willRedirect) {

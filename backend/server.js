@@ -31,7 +31,7 @@ mongoose.connect(process.env.MONGODB_URI);
 // BEGIN PASSPORT HERE -------------------------------------------------
 const session = require('express-session');
 app.use(session({
-  secret: 'keyboard cat'
+  secret: process.env.PASSPORT_SECRET
 }));
 
 require('./routes/auth')(passport);
@@ -53,15 +53,15 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   //   socket.join(docId);
   // })
   socket.on('joinRoom', function(docId) {
-      socket.Color = null;
-      socket.Color = colorPicker[0];
-      usedColors.push(colorPicker.splice(0,1)[0])
-      socket.roomId = docId;
-      socket.emit('socketId', socket.id)
-      console.log('JOINED ROOM', socket.roomId);
-      socket.emit('socketColor', socket.Color)
-      socket.join(docId);
-  })
+    socket.Color = null;
+    socket.Color = colorPicker[0];
+    usedColors.push(colorPicker.splice(0,1)[0]);
+    socket.roomId = docId;
+    socket.emit('socketId', socket.id);
+    console.log('JOINED ROOM', socket.roomId);
+    socket.emit('socketColor', socket.Color);
+    socket.join(docId);
+  });
 
   socket.on('liveEdit', (stringRaw) => {
     console.log('BROADCASTING TO ', socket.roomId);
@@ -104,6 +104,8 @@ app.post('/register', (req, res) => {
   var username = req.body.username;
   var password = req.body.password;
   var confirmPassword = req.body.confirmPassword;
+
+  // Username must not be taken at least 6 characters
 
   if(!isValidRegistration(username, password, confirmPassword)) {
     res.send("Invalid Registration details!");

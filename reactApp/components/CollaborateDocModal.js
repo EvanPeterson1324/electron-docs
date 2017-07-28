@@ -64,10 +64,10 @@ class CollaborateDocModal extends React.Component {
       if (resp.data.success) {
         this.props.history.newDocId = this.state.collabDocId;
         this.props.history.currentDoc = resp.data.doc;
-        this.setState({willRedirect: true})
+        this.setState({willRedirect: true});
         this.closeModal();
       }
-    })
+    });
   }
 
   render() {

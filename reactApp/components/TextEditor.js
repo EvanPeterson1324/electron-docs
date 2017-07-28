@@ -55,7 +55,7 @@ class TextEditor extends React.Component {
     this.generateRevisionsList = this.generateRevisionsList.bind(this);
 
     this.socket = io('http://localhost:3000');
-    this.socket.emit('joinRoom', this.state.docId)
+    this.socket.emit('joinRoom', this.state.docId);
   }
 
   componentDidMount(){
@@ -65,7 +65,7 @@ class TextEditor extends React.Component {
         author: this.props.history.currentDoc.author,
         docId: this.props.history.currentDoc._id,
         collaborators: this.props.history.currentDoc.collaborators,
-      })
+      });
     }
     if (this.state.thisDoc && this.state.thisDoc.versions.length > 0) {
       var content = convertFromRaw(JSON.parse(this.state.thisDoc.versions[0].content));
@@ -109,12 +109,12 @@ class TextEditor extends React.Component {
         this.setState({ editorState: ogEditorState, top, left, height: bottom - top});
       });
     });
-  };
+  }
 
   componentWillUnmount() {
     this.props.history.currentDoc = null;
     this.socket.disconnect();
-  };
+  }
 
   generateRevisionsList(closeModalFunc) {
     if (!this.state.thisDoc || this.state.thisDoc.versions <= 0) {
@@ -128,7 +128,7 @@ class TextEditor extends React.Component {
         </button>
       );
     });
-  };
+  }
 
   loadDiffVersion(version, closeModalFunc){
     // set the state to a different version

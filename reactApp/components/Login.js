@@ -16,22 +16,28 @@ class Login extends React.Component {
       username: '',
       password: '',
       willRedirect: false,
+      isSubmitDisabled: true
     };
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.makeLoginRequest = this.makeLoginRequest.bind(this);
+    this.checkFormsValid = this.checkFormsValid.bind(this);
+
   }
 
   handleUsernameChange(event) {
     this.setState({
       username: event.target.value,
     });
+    this.checkFormsValid();
   }
 
   handlePasswordChange(event) {
     this.setState({
       password: event.target.value,
     });
+
+    this.checkFormsValid();
   }
 
   makeLoginRequest() {
@@ -52,6 +58,25 @@ class Login extends React.Component {
         console.log("Login Response: ", resp);
       })
       .catch(err => console.log("Login Error Response: ", err));
+  }
+
+  checkFormsValid() {
+    const FIVE_CHARACTERS = 5;
+    const EIGHT_CHARACTERS = 8;
+    if(
+         this.state.username.length >= FIVE_CHARACTERS
+      && this.state.password.length >= EIGHT_CHARACTERS
+    ) {
+      this.setState({ isSubmitDisabled: false });
+      return false;
+    }
+
+    // if the forms are all good, lets set the state of the isValidForm and enable
+    // the submit button
+    this.setState({
+      isSubmitDisabled: true
+    });
+    return true;
   }
 
   render() {
@@ -93,7 +118,13 @@ class Login extends React.Component {
           </div>
           <div className="alignRowMargin">
             <Link to="/register" style={styles.buttonMedNoMarginO}>Register</Link>
-            <input type="submit" style={styles.buttonMedNoMarginG}></input>
+
+            <input
+              type="submit"
+              style={styles.buttonMedNoMarginG}
+              disabled={this.state.isSubmitDisabled}
+              >
+            </input>
           </div>
         </form>
       </div>

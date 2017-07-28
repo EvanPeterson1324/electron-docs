@@ -11,12 +11,14 @@ class Register extends React.Component {
       username: '',
       password: '',
       confirmPassword: '',
+      isSubmitDisabled: true ,
       willRedirect: false
     };
     this.handleUsernameChange = this.handleUsernameChange.bind(this);
     this.handlePasswordChange = this.handlePasswordChange.bind(this);
     this.handleConfirmPwChange = this.handleConfirmPwChange.bind(this);
     this.makeRegisterRequest = this.makeRegisterRequest.bind(this);
+    this.checkFormsValid = this.checkFormsValid.bind(this);
   }
 
   handleUsernameChange(event) { this.setState({ username: event.target.value }); }
@@ -39,6 +41,28 @@ class Register extends React.Component {
       })
       .catch(err => console.log("Register Error Response: ", err));
   }
+
+  // this function will be called on every input change and check if the info
+  // entered is valid in real time
+  // checkFormsValid() {
+  //   const FIVE_CHARACTERS = 5;
+  //   const EIGHT_CHARACTERS = 8;
+  //   if(this.state.username.length < FIVE_CHARACTERS
+  //     || this.state.password !== this.state.confirmPassword
+  //     || this.state.password.length < EIGHT_CHARACTERS
+  //     || this.state.confirmPassword.length < EIGHT_CHARACTERS
+  //   ) {
+  //     this.setState({ isSubmitDisabled: true });
+  //     return true;
+  //   }
+  //
+  //   // if the forms are all good, lets set the state of the isValidForm and enable
+  //   // the submit button
+  //   this.setState({
+  //     isSubmitDisabled: false
+  //   });
+  //   return false;
+  // }
 
   render() {
     if(this.state.willRedirect) {
@@ -91,7 +115,11 @@ class Register extends React.Component {
           </div>
           <div className="alignRowMargin">
             <Link style={styles.buttonMedNoMarginO}to="/login">Login</Link>
-            <input type="submit" style={styles.buttonMedNoMarginG}></input>
+            <input
+              type="submit"
+              style={styles.buttonMedNoMarginG}
+              disabled={this.state.isValidForm}>
+              </input>
           </div>
         </form>
       </div>

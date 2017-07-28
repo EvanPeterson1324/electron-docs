@@ -1,6 +1,5 @@
 import React from 'react';
 import axios from 'axios';
-import {Editor, EditorState} from 'draft-js';
 import styles from '../styles/styles';
 import '../styles/container.scss';
 import { Link, Redirect } from 'react-router-dom';
@@ -78,7 +77,7 @@ class DocumentsList extends React.Component {
         });
       }
     });
-  };
+  }
 
   attemptCollaboration() {
     axios({
@@ -93,10 +92,10 @@ class DocumentsList extends React.Component {
       if (resp.data.success) {
         this.props.history.newDocId = this.state.collabDocId;
         this.props.history.currentDoc = resp.data.doc;
-        this.setState({willRedirect: true})
+        this.setState({willRedirect: true});
       }
-    })
-  };
+    });
+  }
 
   generateDocumentList() {
     if (this.state.documents.length > 0) {
@@ -114,8 +113,8 @@ class DocumentsList extends React.Component {
       });
     } else {
       return <p>You have no docs :(</p>
-    };
-  };
+    }
+  }
 
   generateCollaborationList() {
     if (this.state.documents.length > 0) {
@@ -135,43 +134,43 @@ class DocumentsList extends React.Component {
       });
     } else {
       return <p>You have no docs :(</p>
-    };
-  };
-
-    openDocumentClick(doc) {
-      this.props.history.newDocId = doc._id;
-      this.props.history.currentDoc = doc;
-    }
-
-    render() {
-      if(this.state.willRedirect) {
-        return (<Redirect to="/textEditor"/>);
-      }
-      console.log('THESE ARE MY DOCS', this.state.documents);
-      return(
-        <div className="alignLeft50">
-          <h1 style={styles.title}>👋🏼  Hey {this.props.history.username}!</h1>
-          <div className="alignRow">
-            <NewDocModal createDoc={this.createDoc} history={this.props.history}/>
-            <CollaborateDocModal attemptCollaboration={this.attemptCollaboration} history={this.props.history}/>
-          </div>
-          <div className="spacer"></div>
-          <div className="alignRow">
-            <div className="card">
-              <h1 style={styles.h2}>My Documents</h1>
-              <hr style={styles.hr}></hr>
-              <ul> {this.generateDocumentList()} </ul>
-
-            </div>
-            <div className="card2">
-              <h1 style={styles.h2}>My Collaborations</h1>
-              <hr style={styles.hr}></hr>
-              <ul> {this.generateCollaborationList()} </ul>
-            </div>
-          </div>
-        </div>
-      );
     }
   }
 
-  export default DocumentsList;
+  openDocumentClick(doc) {
+    this.props.history.newDocId = doc._id;
+    this.props.history.currentDoc = doc;
+  }
+
+  render() {
+    if(this.state.willRedirect) {
+      return (<Redirect to="/textEditor"/>);
+    }
+    console.log('THESE ARE MY DOCS', this.state.documents);
+    return(
+      <div className="alignLeft50">
+        <h1 style={styles.title}>👋🏼  Hey {this.props.history.username}!</h1>
+        <div className="alignRow">
+          <NewDocModal createDoc={this.createDoc} history={this.props.history}/>
+          <CollaborateDocModal attemptCollaboration={this.attemptCollaboration} history={this.props.history}/>
+        </div>
+        <div className="spacer"></div>
+        <div className="alignRow">
+          <div className="card">
+            <h1 style={styles.h2}>My Documents</h1>
+            <hr style={styles.hr}></hr>
+            <ul> {this.generateDocumentList()} </ul>
+
+          </div>
+          <div className="card2">
+            <h1 style={styles.h2}>My Collaborations</h1>
+            <hr style={styles.hr}></hr>
+            <ul> {this.generateCollaborationList()} </ul>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+export default DocumentsList;
