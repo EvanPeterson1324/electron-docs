@@ -59,7 +59,6 @@ class TextEditor extends React.Component {
   }
 
   componentDidMount(){
-    console.log('PROPS', this.props);
     if (this.props.history.currentDoc) {
       this.setState({
         title: this.props.history.currentDoc.title,
@@ -90,7 +89,6 @@ class TextEditor extends React.Component {
     });
 
     this.socket.on('receiveNewCursor', incomingSelectionObj => {
-      console.log('inc', incomingSelectionObj);
 
       let editorState = this.state.editorState;
       const ogEditorState = editorState;

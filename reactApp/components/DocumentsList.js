@@ -123,8 +123,6 @@ class DocumentsList extends React.Component {
     if (this.state.documents.length > 0) {
       return this.state.documents.map((doc) => {
         var singleDoc = doc.data.doc;
-        console.log(singleDoc);
-        console.log('AUTHOR', singleDoc.author, this.state.user.username);
         if (singleDoc.author !== this.state.user.username) {
           return (
             <Link
@@ -151,7 +149,6 @@ class DocumentsList extends React.Component {
       if(this.state.willRedirect) {
         return (<Redirect to="/textEditor"/>);
       }
-      console.log('THESE ARE MY DOCS', this.state.documents);
       return(
         <div className="alignLeft50">
           <div className="spacer65"></div>

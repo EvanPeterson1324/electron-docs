@@ -47,24 +47,17 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
   socket.on('newEvent', function() {
   });
 
-  // socket.on('joinRoom', function(docId) {
-  //   socket.roomId = docId;
-  //   console.log('JOINED ROOM', socket.roomId);
-  //   socket.join(docId);
-  // })
   socket.on('joinRoom', function(docId) {
       socket.Color = null;
       socket.Color = colorPicker[0];
       usedColors.push(colorPicker.splice(0,1)[0])
       socket.roomId = docId;
       socket.emit('socketId', socket.id)
-      console.log('JOINED ROOM', socket.roomId);
       socket.emit('socketColor', socket.Color)
       socket.join(docId);
   })
 
   socket.on('liveEdit', (stringRaw) => {
-    console.log('BROADCASTING TO ', socket.roomId);
     socket.to(socket.roomId).emit('broadcastEdit', stringRaw);
   });
 
@@ -76,7 +69,6 @@ io.on('connection', socket => {  //this is listening to all socket events, we do
     if (socket.roomId) {
       colorPicker.push(usedColors.splice(usedColors.indexOf(socket.Color), 1)[0])
       socket.leave(socket.roomId);
-      console.log('LEFT SOCKET');
     }
   })
 });
@@ -87,6 +79,22 @@ app.get('/', (req, res) => {
 
 app.get('/login', (req, res) => {
   res.send('We good fham');
+});
+
+app.post('/findUser', (req, res) => {
+  const username = req.body.username;
+  User.findOne({username})
+    .then((user) => {
+      if(user) {
+        res.json({
+          success: true,
+          username: user.username
+        });
+      }
+      res.json({
+        failure: "Could not find user!",
+      });
+    });
 });
 
 app.post('/login',

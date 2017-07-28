@@ -49,7 +49,6 @@ class Login extends React.Component {
             willRedirect: true
           });
         }
-        console.log("Login Response: ", resp);
       })
       .catch(err => console.log("Login Error Response: ", err));
   }
