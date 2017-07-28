@@ -21,7 +21,8 @@ function createWindow () {
   mainWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'build', DEV_MODE ? 'index.dev.html' : 'index.html'),
     protocol: 'file:',
-    slashes: true
+    slashes: true,
+    icon: path.join(__dirname, 'reactApp/img/64x64.png')
   }));
 
   // Open the DevTools.

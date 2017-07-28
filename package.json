@@ -10,7 +10,8 @@
     "devServer": "nodemon --watch backend backend/server.js",
     "webpack": "webpack",
     "prodWebpack": "webpack -p",
-    "start": "node backend/server.js"
+    "start": "electron main.js",
+    "server": "node backend/server.js"
   },
   "repository": "",
   "keywords": [],
